@@ -8,6 +8,7 @@ $$D_{9m\times n} = U'_{9m\times k}D'_{k\times n}$$
 
 升维到Deformation信息。
 
+设原主成分$U$每一维的标准差为$Std.Dev$，为了避免潜在的畸形体型，对于新采样的$U'$每一维的标准差控制在$\pm 3\times Std.Dev$。
 #### 高斯采样 Box-Muller
 
 若随机变量$z$服从标准正态分布$N(0,1)$，令$x = \sigma \cdot x + \mu$，则$x$服从均值为$\mu$,方差为$\sigma^2$的高斯分布$N(\mu, \sigma^2)$。因此，任意高斯分布其实都可以通过标准正态分布通过拉伸和平移得到，所以可以通过标准正态分布采用为例来研究这个问题。
@@ -47,3 +48,13 @@ $$
 想要得到服从$z \sim N(\mu,\sigma^2)$的高斯分布，则只需要对$x \sim N(0,1）$做出如下变换：
 
 $$y = \sigma x + \mu$$
+
+
+#### 数据集结果
+##### Male
+![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/01.jpg)
+![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/02.jpg)
+
+##### Female
+![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/001.jpg)
+![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/002.jpg)
