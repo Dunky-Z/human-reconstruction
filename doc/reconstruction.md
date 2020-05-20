@@ -1,10 +1,14 @@
 ### 生成数据集
 #### 对主成分采样
-使用三角形变形Deformation作为特征，所有特征构成矩阵$D_{9m \times n}$，其中$m$为三角面片数量，$n$为数据集模型数量。如果我们通过SVD找到了矩阵$DD^T$最大的$k$个特征向量张成的$9m\times k$维矩阵$U$。则我们如果进行如下处理：$D'_{k\times n}= U^T_{k\times 9m}D_{9m \times n}$。可以得到一个$k\times n$的矩阵，就完成了降维操作。  
-只要能获得不同的$D$即可生成不同身材的人模型，于是只要对$U_{9m \times k}$进行高斯采样，得到新采样的$U'$，
+使用三角形变形Deformation作为特征，所有特征构成矩阵$D_{9m \times n}$，其中$m$为三角面片数量，$n$为数据集模型数量。如果我们通过SVD找到了矩阵 $DD^T$ 最大的 $k$ 个特征向量张成的 $9m\times k$ 维矩阵 $U$ 。则我们如果进行如下处理：
+
+$$D^{'}_{k\times n}= U^T_{k\times 9m}D_{9m \times n}$$
+
+可以得到一个 $k \times n$ 的矩阵，就完成了降维操作。  
+只要能获得不同的 $D$ 即可生成不同身材的人模型，于是只要对 $U_{9m \times k}$ 进行高斯采样，得到新采样的 $U^{'}$，
 由
 
-$$D_{9m\times n} = U'_{9m\times k}D'_{k\times n}$$
+$$D_{9m\times n} = U^{'}_{9m\times k}D^{'}_{k\times n}$$
 
 升维到Deformation信息。
 
