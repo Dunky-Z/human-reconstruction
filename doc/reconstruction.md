@@ -4,13 +4,11 @@
 
 $$D^{'}_{k\times n}= U^{T}_{k\times 9m}D_{9m \times n}$$
 
-可以得到一个 $k \times n$ 的矩阵，就完成了降维操作。  
-只要能获得不同的 $D$ 即可生成不同身材的人模型，于是只要对 $U_{9m \times k}$ 进行高斯采样，得到新采样的 $U^{'}$，
-由
+对降维后的结果$D'$每一维进行高斯采样，生成新主成分$D'$,由
 
-$$D_{9m \times n} = U^{'}_{9m \times k}D^{'}_{k \times n}$$
+$$D_{9m \times n} = U_{9m \times k}D^{'}_{k \times n}$$
 
-升维到Deformation信息。
+即可获取随机的Deformation信息。
 
 设原主成分$U$每一维的标准差为$Std.Dev$，为了避免潜在的畸形体型，对于新采样的$U'$每一维的标准差控制在$\pm 3\times Std.Dev$。
 #### 高斯采样 Box-Muller
@@ -56,9 +54,38 @@ $$y = \sigma x + \mu$$
 
 #### 数据集结果
 ##### Male
-![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/01.jpg)
-![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/02.jpg)
+![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/dertcfvyghjbksafdaf.jpg)
 
 ##### Female
-![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/001.jpg)
-![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/002.jpg)
+![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/女性数据集.jpg)
+
+#### 检查身高是否符合正态分布
+
+利用python计算出所有模型（20000个）的身高，然后绘制出直方图，基本符合正态分布。
+##### 男性身高分布  
+因为数据集采集的样本是欧美国家的成年人，身高偏高，所有数据集因为没有什么问题。
+
+<head>  
+<title></title>  
+<style type="text/css">  
+.center img{ height:500px}  
+</style>  
+<center><img 
+
+![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/身高正态分布直方图.png)
+</center>
+</head> 
+
+#### 女性身高分布
+
+<head>  
+<title></title>  
+<style type="text/css">  
+.center img{ height:500px}  
+</style>  
+<center><img 
+
+![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/女性身高分布图.png)
+
+</center>
+</head> 
