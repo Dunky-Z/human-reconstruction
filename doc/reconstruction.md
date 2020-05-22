@@ -66,26 +66,8 @@ $$y = \sigma x + \mu$$
 因为数据集采集的样本是欧美国家的成年人，身高偏高，所有数据集因为没有什么问题。
 
 <head>  
-<title></title>  
-<style type="text/css">  
-.center img{ height:500px}  
-</style>  
-<center><img 
 
 ![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/身高正态分布直方图.png)
-</center>
-</head> 
 
 #### 女性身高分布
-
-<head>  
-<title></title>  
-<style type="text/css">  
-.center img{ height:500px}  
-</style>  
-<center><img 
-
 ![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/女性身高分布图.png)
-
-</center>
-</head> 
