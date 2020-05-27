@@ -71,3 +71,11 @@ $$y = \sigma x + \mu$$
 
 #### 女性身高分布
 ![](https://gitee.com/dominic_z/markdown_picbed/raw/master/img/女性身高分布图.png)
+
+### 测量与预测尺寸
+#### 测量尺寸
+采用计算控制点之间的欧式距离之和。
+
+#### 预测尺寸
+
+三种已有的矩阵插补方法的比较。（MICE，KNN，SoftImpute）
