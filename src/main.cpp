@@ -27,7 +27,6 @@ int main()
 	//测量并保存尺寸信息
 	Eigen::MatrixXd measurelist;
 	measure.ConvertMeasure(verts, facets, control_points, measurelist);
-
 	cout << "Main spend : " << (double)(clock() - t) / CLOCKS_PER_SEC << "seconds!" << endl;
 	getchar();
 	return 0;
