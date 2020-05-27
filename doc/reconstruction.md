@@ -79,3 +79,14 @@ $$y = \sigma x + \mu$$
 #### 预测尺寸
 
 三种已有的矩阵插补方法的比较。（MICE，KNN，SoftImpute）
+
+##### 20000个模型
+
+![](https://gitee.com//dominic_z/markdown_picbed/raw/master/img/predict.png)
+
+##### Song等人的4000个模型
+
+![](https://gitee.com//dominic_z/markdown_picbed/raw/master/img/20200527164745.png)
+
+总体来看误差还要大一些。
+我求平均误差的方式是，给定一个模型的原始尺寸。随机丢掉1-18个尺寸，然后用剩余尺寸预测。重复进行100次，然后取平均误差。Song原文里也没说是如何去平均误差的。如果只人为固定丢掉的尺寸，比如身高或者腰围这些尺寸较大的数据，误差就会降低很多。
