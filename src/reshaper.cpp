@@ -122,62 +122,116 @@ void Reshaper::SaveBinEdge(std::vector<std::vector<std::vector<double>>>& contro
 	}
 }
 
-void Reshaper::FitOneMeasurements(Eigen::Matrix3Xd & res, std::vector<int> point_idx, const Eigen::Matrix3Xd & vertices, const double measurement)
-{
-	const int num_v = point_idx.size();
-	int num_edge;
-	if (num_v > 2)
-		num_edge = num_v;
-	else
-		num_edge = 1;
+//void Reshaper::FitOneMeasurements(Eigen::Matrix3Xd & res, std::vector<int> point_idx, const Eigen::Matrix3Xd & vertices, const double measurement)
+//{
+//
+//	int num_edge;
+//	if (num_v > 2)
+//		num_edge = num_v;
+//	else
+//		num_edge = 1;
+//
+//	Eigen::SparseMatrix<double> A;
+//	Eigen::VectorXd b;
+//	typedef Eigen::Triplet<double> Tri;
+//	std::vector<Tri> triplets;
+//
+//	A.resize(3 * num_edge, 3 * num_v);
+//	b.setConstant(3 * num_edge, 0);
+//
+//	for (int j = 0; j < num_measure; ++j)
+//	{
+//		for (int i = 0; i < 3 * num_edge; i = i + 3)
+//		{
+//			const int edge_0 = point_idx[i % (3 * num_edge)];
+//			const int edge_1 = point_idx[(i + 1) % (3 * num_edge)];
+//			const Eigen::Vector3d& v0 = vertices.col(edge_0);
+//			const Eigen::Vector3d& v1 = vertices.col(edge_1);
+//			const Eigen::Vector3d& edge_01 = v1 - v0;
+//			const double edge_len = edge_01.norm();
+//
+//			for (int j = 0; j < 3; ++j)
+//			{
+//				triplets.push_back(Tri(i + j, edge_0 * 3, -1));
+//				triplets.push_back(Tri(i + j, edge_1 * 3, 1));
+//				b(i + j) = ((edge_01[j] / edge_len)*(measurement / num_edge));
+//			}
+//		}
+//	}
+//
+//
+//
+//	A.setFromTriplets(triplets.begin(), triplets.end());
+//	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
+//	solver.compute(A.transpose() * A);
+//	Eigen::VectorXd vecV = solver.solve(A.transpose() * b);
+//	res = Eigen::Map<Eigen::Matrix3Xd>(vecV.data(), 3, num_v);
+//}
 
-	Eigen::SparseMatrix<double> A;
-	Eigen::VectorXd b;
+void Reshaper::FitMeasurements(Eigen::Matrix3Xd& res_verts, std::vector<std::vector<int>> point_idx, const Eigen::Matrix3Xd &vertices, const Eigen::MatrixXd measurements)
+{
+	const int num_measure = point_idx.size()-1;
+	//保存每个尺寸的边数量
+	std::vector<int> edge;
+	for (auto& num_v : point_idx)
+	{
+		if (num_v.size() > 2)
+		{
+			edge.push_back(num_v.size());
+		}
+		else
+		{
+			//edge.push_back(1);
+			continue;
+		}
+	}
+	//所有边的数量
+	int num_edge_all = std::accumulate(edge.begin(), edge.end(), 0);
+
 	typedef Eigen::Triplet<double> Tri;
 	std::vector<Tri> triplets;
+	triplets.reserve(6 * num_edge_all);
+	Eigen::VectorXd b;
+	b.setConstant(3 * num_edge_all, 0);
+	Eigen::SparseMatrix<double> A;
+	A.resize(3 * num_edge_all, 3 * vertices.cols());
 
-	A.resize(num_edge, 3 * num_v);
-	b.setConstant(num_edge, 0);
-
-	for (int i = 0; i < 3 * num_edge; i = i + 3)
+	int row = 0;
+	for (int i = 0; i < num_measure; ++i)
 	{
-		const int edge_0 = point_idx[i % (3 * num_edge)];
-		const int edge_1 = point_idx[(i + 1) % (3 * num_edge)];
-		const Eigen::Vector3d& v0 = vertices.col(edge_0);
-		const Eigen::Vector3d& v1 = vertices.col(edge_1);
-		const Eigen::Vector3d& edge_01 = v1 - v0;
-		const double edge_len = edge_01.norm();
 
-		for (int j = 0; j < 3; ++j)
+		for (int j = 0; j < edge[i]; ++j)
 		{
-			triplets.push_back(Tri(i + j, edge_0 * 3, -1));
-			triplets.push_back(Tri(i + j, edge_1 * 3, 1));
+			const int edge_0 = point_idx[i+1][j % edge[i]];
+			const int edge_1 = point_idx[i+1][(j + 1) % edge[i]];
+			const Eigen::Vector3d v0 = vertices.col(edge_0);
+			const Eigen::Vector3d v1 = vertices.col(edge_1);
+			const Eigen::Vector3d edge_01 = v1 - v0;
+			const double edge_len = edge_01.norm();
+			const Eigen::Vector3d auxd = (edge_01 / edge_len) * (measurements(i+1, 0) / edge[i]);
+
+			for (int k = 0; k < 3; ++k)
+			{
+				triplets.push_back(Tri(row + j * 3 + k, edge_0 * 3 + k, -1));
+				triplets.push_back(Tri(row + j * 3 + k, edge_1 * 3 + k, 1));
+				b(row + j * 3 + k) = auxd[k];
+				std::cout << row + j * 3 + k << " " << edge_0 * 3 + k << " " << auxd[k] << std::endl;
+			}
 		}
-		Eigen::Vector3d one;
-		one << 1, 1, 1;
-		one.transpose();
-		b(i) = one.dot((edge_01 / edge_len)*(measurement / num_edge));
+		row += edge[i] * 3;
 	}
 
-
-
-
-	A.setFromTriplets(triplets.begin(), triplets.end());
+	A.setFromTriplets(triplets.begin(), triplets.end());	
+	auto AT = A.transpose();
 	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
+	//solver.compute(A * AT);
 	solver.compute(A.transpose() * A);
+	if (solver.info() != Eigen::Success)
+		std::cout << "solve failed !" << std::endl;
 	Eigen::VectorXd vecV = solver.solve(A.transpose() * b);
-	res = Eigen::Map<Eigen::Matrix3Xd>(vecV.data(), 3, num_v);
+	//Eigen::VectorXd vecV = AT *  solver.solve(b);
+	res_verts = Eigen::Map<Eigen::Matrix3Xd>(vecV.data(), 3, vertices.cols());
 }
-//
-//void Reshaper::FitMeasurements(std::vector<std::vector<int>> point_idx, const Eigen::Matrix3Xd &vertices, const Eigen::MatrixXd measurements)
-//{
-//	int num_measure = point_idx.size();
-//	Eigen::MatrixXd res_verts;
-//	for (int i = 0; i < num_measure; ++i)
-//	{
-//		FitOneMeasurements(point_idx[i], vertices, measurements.col(i));
-//	}
-//}
 /*!
 *@brief  以二进制保存顶点信息
 *@param[out]

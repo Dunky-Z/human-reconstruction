@@ -35,7 +35,7 @@ int main()
 	//±£´æ±ßĞÅÏ¢
 	std::vector<std::vector<int>> point_idx;
 	reshaper.SaveBinEdge(control_points, point_idx);
-	reshaper.FitOneMeasurements(res, point_idx[0], one_verts, one_measure(0, 0));
+	reshaper.FitMeasurements(res, point_idx, one_verts, one_measure);
 
 	cout << res.leftCols(20) << endl;
 
