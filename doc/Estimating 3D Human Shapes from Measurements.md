@@ -31,49 +31,25 @@ $$
 
 其中$\vec p$是顶点坐标向量，$\vec q$是切平面与网格上三角面片的边的交点坐标向量。$l(d)$是实际测量线段的长度，$l(e)$是实际测量的围长。
 
-
+在模型预测部分我们知道，只要给定一个全新的降维后的主成分$W_{new}$，就可以带入线性回归模型$X_{new} = AW_{new}+\mu$，得到一个全新的模型。那么接下来目标就是，如何获得一个更准确的$W_{new}$。我们知道$W_{new} = A^{+}(X^{init}_{new} - \mu)$,所以可以从如何获取一个比较好的$X^{init}_{new}$着手。
 - Minimization with respect to $W_{new}$  
-现在的目标就是求$E_m = E_e+E_g+E_c$最小化。首先用学习的方法得到一个结果，但是这个结果处于数据集所构建的空间，有先验条件的约束，不能表达数据集构建的空间以外的模型。
+$X^{init}_{new}$可以通过学习的方法算出一个初始的模型，通过对三类尺寸的优化获得更精确的模型。优化方法采用拟牛顿法，需要对方程求导：$\nabla_{W_{new}}E = A^+\nabla_{p_i}E$
 
 $$\nabla_{\mathrm{pi}} E_{e}=\sum_{d \in D\left(p_{i}\right)} 4\left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(d)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)$$
 
+$$\nabla_{\mathrm{pi}} E_{g}=\sum_{e \in P\left(p_{i}\right)} 4\left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)$$
+
+$$\nabla_{\mathrm{pi}} E_{c}=\sum_{e \in C\left(p_{i}\right)} 4\left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)$$
+计算出新的$W_{new}$后就可以通过线性回归模型得到新的模型$X_{new}^{pca}=AW_{new}+\mu$。但是这个模型仍然是数据集空间中的模型。
 - Minimization with respect to $p_i$  
 接下来就用网格优化的方法，得到一个数据集构建的空间无法描述的全新的结果。  
-如果直接对$E_m = E_e+E_g+E_c$最小化能量处理，可能会导致网格不光滑。所以加入一个平滑项来保证得到模型在人体空间内。
+如果直接对$E_m = E_e+E_g+E_c$最小化能量处理，可能会导致网格不光滑。所以加入一个平滑项来保证得到模型在人体空间内。该平滑项的意义是让相邻的顶点都有相似的变形，$\Delta{\mathbf{p}_i}$表示变形前后的平移向量。
 
 $$
-E_s = \sum_{p_{i}\in X_{new}}\sum_{p_j\in {N(p_i)}}(\Delta{\vec{p}_i}-\Delta{\vec{p}_j})^2
+E_s = \sum_{p_{i}\in X_{new}}\sum_{p_j\in {N(p_i)}}(\Delta{\mathbf{p}_i}-\Delta{\mathbf{p}_j})^2
 $$
 
 $$\nabla_{\mathbf{p}_{\mathbf{i}}} E_{s}=\sum_{p_{j} \in N\left(p_{i}\right)} 2\left(\Delta \mathbf{p}_{\mathbf{i}}-\Delta \mathbf{p}_{\mathbf{j}}\right)$$
-
-
+这一步的整体能量函数可以表示为$E=(1-\lambda)E_m+\lambda E_s$。并且将顶点初始化为上一步中求得的$X_{new}^{pca}$。
 ## 实现细节
-其实我还没看懂作者的两步优化能量函数什么意思。不知道为什么是对$W_{new}$最小化能量。
 
-我现在的想法是，我已经能够用学习的方法生成一个初始模型了，我要做的就是如何进行进一步优化。让每个尺寸对应的顶点构成的边长之和逼近目标尺寸。如果能够求出每个尺寸对应的顶点，就可以用泊松变形的方法将整个模型进行一次变形，保证光滑。
-
-所以我最近在做的是如何让三角网格边长逼近已知的长度。但是没有算出结果，问了其他三个伙伴也没能解决。
-
-
-为了承接现有工作，暂时没有采用将尺寸信息分为三大类，仍然使用控制点之间的欧式距离作为尺寸信息。$\mathcal{E}$为所有控制点构成的边的集合。
-
-为了避免向量与标量的混合运算，将$l(e)$替换成一个二范数为$l(e)$的辅助向量$\mathbf {d}$:
-
-$$\mathbf {d_e} = \frac{\mathbf{q_i}-\mathbf{q_j}}{\|\mathbf{q_i}-\mathbf{q_j}\|}l_t(e)$$
-
-其中$l_t(e)$暂取目标总长度的平均$l_t(e) = l_t/num(e)$。
-
-能量函数可以改写为：
-
-$$
-E_{c}=\sum_{e \in \mathcal{E}}\left(\left(\vec {p}_{i}-\vec {p}_{j}\right)-\mathbf{d_e}\right)^{2}
-$$
-
-整理成矩阵形式：
-
-$$A\mathbf {x} = \mathbf {d}$$
-
-其中矩阵$A$大小为$3E\times 3V$,$\mathbf{d}$大小为$3E\times 1$，$E$为所有边的个数，$V$为模型顶点个数。求一把发现方程欠定，求不出来。接下来想把$V$改为尺寸相关的顶点，而不是所有顶点求解。因为我现在不需要知道整个模型的顶点位置，我只需要知道19个尺寸相关顶点的位置，然后用泊松变形进行进一步求解剩余顶点位置。
-
-不知道这个方法可不可行。
