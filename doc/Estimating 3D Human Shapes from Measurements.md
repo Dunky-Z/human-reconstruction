@@ -14,7 +14,7 @@ $$X_{new} = AW_{new}+\mu \tag{2}$$
 
 $$X_{new} = ABP_{new}+\mu \tag{3}$$
 
-## 模型精调
+## 模型微调
 测量的数据分为三类，欧式距离值，测地距离值和围长值，对于每个待求的网格$X_i$，在网格上对应的求出的数据尽量和真实值保持一致，这就是一个最小化能量函数的问题。 
   
 $$
@@ -37,7 +37,7 @@ $X^{init}_{new}$可以通过学习的方法算出一个初始的模型，通过�
 
 $$\nabla_{\mathrm{pi}} E_{e}=\sum_{d \in D\left(p_{i}\right)} 4\left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(d)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)$$
 
-$$\nabla_{\mathrm{pi}} E_{g}=\sum_{e \in P\left(p_{i}\right)} 4\left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)$$
+$$\nabla_{\mathrm{pi}} E_{g}=\sum_{e \in P\left(p_{i}\right)} 4\left(\left(\mathrm{p}_{\mathrm{k}}-\mathrm{p}_{\mathrm{l}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{k}}-\mathrm{p}_{\mathrm{l}}\right)$$
 
 $$\nabla_{\mathrm{pi}} E_{c}=\sum_{e \in C\left(p_{i}\right)} 4\left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)$$
 计算出新的$W_{new}$后就可以通过线性回归模型得到新的模型$X_{new}^{pca}=AW_{new}+\mu$。但是这个模型仍然是数据集空间中的模型。
@@ -52,4 +52,12 @@ $$
 $$\nabla_{\mathbf{p}_{\mathbf{i}}} E_{s}=\sum_{p_{j} \in N\left(p_{i}\right)} 2\left(\Delta \mathbf{p}_{\mathbf{i}}-\Delta \mathbf{p}_{\mathbf{j}}\right)$$
 这一步的整体能量函数可以表示为$E=(1-\lambda)E_m+\lambda E_s$。并且将顶点初始化为上一步中求得的$X_{new}^{pca}$。
 ## 实现细节
+
+$$E=(1-\lambda)E_m+\lambda E_s$$
+$$\nabla E = (1-\lambda)\nabla E_m+\lambda \nabla E_s$$
+$$
+\nabla E=4\sum_{p_i\in X_{new}}( \sum_{d \in D\left(p_{i}\right)} \left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(d)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)+
+\sum_{e \in P\left(p_{k}\right)} \left(\left(\mathrm{p}_{\mathrm{k}}-\mathrm{p}_{\mathrm{l}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{k}}-\mathrm{p}_{\mathrm{l}}\right)+
+\sum_{e \in C\left(p_{i}\right)} \left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)+
+\sum_{p_{j} \in N\left(p_{i}\right)} 2\left(\Delta \mathbf{p}_{\mathbf{i}}-\Delta \mathbf{p}_{\mathbf{j}}\right))$$
 
