@@ -15,8 +15,11 @@ $$X_{new} = AW_{new}+\mu \tag{2}$$
 $$X_{new} = ABP_{new}+\mu \tag{3}$$
 
 ## 模型微调
-测量的数据分为三类，欧式距离值，测地距离值和围长值，对于每个待求的网格$X_i$，在网格上对应的求出的数据尽量和真实值保持一致，这就是一个最小化能量函数的问题。 
-  
+### 算法总体流程
+已知通过学习方法获取的一个初始模型$X_{new}^{init}$ $\Rightarrow$ 将$W$看做关于$X_{new}^{init}$的函数：$W_{new} = A^{+}(X^{init}_{new} - \mu)$，通过优化$X_{new}^{init}$生成更优的$W_{new}$$\Rightarrow$将$W_{new}$带入回归模型得到新的初始模型$X_{new}^{pca}=AW_{new}+\mu$$\Rightarrow$对$X_{new}^{pca}$进行相同的尺寸优化，但是要加上保形能量项$E=(1-\lambda)E_m+\lambda E_s$,得到最终结果$X_{new}$
+### 算法细节
+测量的数据分为三类，欧式距离值，测地距离值和围长值，对于每个待求的网格$X_i$，在网格上对应的求出的数据尽量和真实值保持一致，这就是一个最小化能量函数的问题 
+
 $$
 E_{e}=\sum_{d \in \mathcal{D}}\left(\left(\vec{p}_{i}-\vec p_{j}\right)^{2}-\left(l_{t}(d)\right)^{2}\right)^{2}
 $$
@@ -26,10 +29,17 @@ E_{g}=\sum_{e \in \mathcal{P}}\left((\vec {p}_{k}-\vec {p}_{l})^{2}-\left(l_{t}(
 $$
 
 $$
-E_{c}=\sum_{e \in \mathcal{C}}\left(\left(\vec {q}_{i}-\vec {q}_{j}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)^{2}
+E_{c}=
+\sum_{e \in \mathcal{C}}\left(\left(\vec {q}_{i}-\vec {q}_{j}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)^{2} = 
+\sum_{e \in \mathcal{C}}\left(\left(\alpha(\vec {p}_{n}-\vec {p}_{m}\right)+\vec{p}_m-\beta(\vec{p}_g - \vec{p}_h) - \vec{p}_h)^2-\left(l_{t}(e)\right)^{2}\right)^{2}
 $$
 
-其中$\vec p$是顶点坐标向量，$\vec q$是切平面与网格上三角面片的边的交点坐标向量。$l(d)$是实际测量线段的长度，$l(e)$是实际测量的围长。
+其中$\vec p$是顶点坐标向量，$\vec q$是切平面与网格上三角面片的边的交点坐标向量。$l_t(d)$是实际测量线段的长度，$l_t(e)$是实际测量的围长，欧式距离就是两点坐标的直线距离直接计算就可以，而测地距离和围长是多个顶点距离之和，每一段的逼近长度需要单独计算出来。假定变形前后长度比例不变，可以通过下式算出逼近的长度：
+
+$$l_t(d) = \frac{l_t(P)}{l_g(P)}l_g(e)$$
+
+$$l_t(e) = \frac{l_t(C)}{l_g(C)}l_g(e)$$
+
 
 在模型预测部分我们知道，只要给定一个全新的降维后的主成分$W_{new}$，就可以带入线性回归模型$X_{new} = AW_{new}+\mu$，得到一个全新的模型。那么接下来目标就是，如何获得一个更准确的$W_{new}$。我们知道$W_{new} = A^{+}(X^{init}_{new} - \mu)$,所以可以从如何获取一个比较好的$X^{init}_{new}$着手。
 - Minimization with respect to $W_{new}$  
@@ -39,7 +49,12 @@ $$\nabla_{\mathrm{pi}} E_{e}=\sum_{d \in D\left(p_{i}\right)} 4\left(\left(\math
 
 $$\nabla_{\mathrm{pi}} E_{g}=\sum_{e \in P\left(p_{i}\right)} 4\left(\left(\mathrm{p}_{\mathrm{k}}-\mathrm{p}_{\mathrm{l}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{k}}-\mathrm{p}_{\mathrm{l}}\right)$$
 
-$$\nabla_{\mathrm{pi}} E_{c}=\sum_{e \in C\left(p_{i}\right)} 4\left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)$$
+$$
+\nabla_{\mathrm{pi}} E_{c}=*
+$$
+
+优化欧式距离时，可以直接对$p_i$求导，优化测地距离时，用的是最短路径，也就是路径顶点之间距离之和，所以也可以直接对$p_i$求导，而优化围长时，围长与网格的交点不一定是网格顶点，所以不能直接求导。但是交点仍然可以用其所在边的两个端点来线性表示它。所以通过转换后仍然可以对$p_i$求导。
+
 计算出新的$W_{new}$后就可以通过线性回归模型得到新的模型$X_{new}^{pca}=AW_{new}+\mu$。但是这个模型仍然是数据集空间中的模型。
 - Minimization with respect to $p_i$  
 接下来就用网格优化的方法，得到一个数据集构建的空间无法描述的全新的结果。  
@@ -49,15 +64,14 @@ $$
 E_s = \sum_{p_{i}\in X_{new}}\sum_{p_j\in {N(p_i)}}(\Delta{\mathbf{p}_i}-\Delta{\mathbf{p}_j})^2
 $$
 
-$$\nabla_{\mathbf{p}_{\mathbf{i}}} E_{s}=\sum_{p_{j} \in N\left(p_{i}\right)} 2\left(\Delta \mathbf{p}_{\mathbf{i}}-\Delta \mathbf{p}_{\mathbf{j}}\right)$$
-这一步的整体能量函数可以表示为$E=(1-\lambda)E_m+\lambda E_s$。并且将顶点初始化为上一步中求得的$X_{new}^{pca}$。
+$$\nabla_{\mathbf{p}_{\mathbf{i}}} E_{s}=\sum_{p_{j} \in N\left(p_{i}\right)} 2\left(\Delta \mathbf{p}_{\mathbf{i}}-\Delta \mathbf{p}_{\mathbf{j}}\right)
+$$
+
+将顶点初始化为上一步中求得的$X_{new}^{pca}$，这一步的整体能量函数可以表示为$E=(1-\lambda)E_m+\lambda E_s$。
+
+## 问题
+为何不直接对$X_{new}^{init}$加上保形能量，一步到位，还要重新生成一个新的PCA权$W$。再对新的模型进行重复的优化过程。
+
 ## 实现细节
 
-$$E=(1-\lambda)E_m+\lambda E_s$$
-$$\nabla E = (1-\lambda)\nabla E_m+\lambda \nabla E_s$$
-$$
-\nabla E=4\sum_{p_i\in X_{new}}( \sum_{d \in D\left(p_{i}\right)} \left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(d)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)+
-\sum_{e \in P\left(p_{k}\right)} \left(\left(\mathrm{p}_{\mathrm{k}}-\mathrm{p}_{\mathrm{l}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{k}}-\mathrm{p}_{\mathrm{l}}\right)+
-\sum_{e \in C\left(p_{i}\right)} \left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)+
-\sum_{p_{j} \in N\left(p_{i}\right)} 2\left(\Delta \mathbf{p}_{\mathbf{i}}-\Delta \mathbf{p}_{\mathbf{j}}\right))$$
 
