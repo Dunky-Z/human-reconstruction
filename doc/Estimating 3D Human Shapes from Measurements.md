@@ -21,17 +21,17 @@ $$X_{new} = ABP_{new}+\mu \tag{3}$$
 测量的数据分为三类，欧式距离值，测地距离值和围长值，对于每个待求的网格$X_i$，在网格上对应的求出的数据尽量和真实值保持一致，这就是一个最小化能量函数的问题 
 
 $$
-E_{e}=\sum_{d \in \mathcal{D}}\left(\left(\vec{p}_{i}-\vec p_{j}\right)^{2}-\left(l_{t}(d)\right)^{2}\right)^{2}
+E_{e}=\sum_{d \in \mathcal{D}}\left(\left(\mathbf{p}_\mathbf{i}-\mathbf p_\mathbf{j}\right)^{2}-\left(l_{t}(d)\right)^{2}\right)^{2}
 $$
 
 $$
-E_{g}=\sum_{e \in \mathcal{P}}\left((\vec {p}_{k}-\vec {p}_{l})^{2}-\left(l_{t}(e)\right)^{2}\right)^{2}
+E_{g}=\sum_{e \in \mathcal{P}}\left((\mathbf {p}_{k}-\mathbf {p}_{l})^{2}-\left(l_{t}(e)\right)^{2}\right)^{2}
 $$
 
 $$
 E_{c}=
-\sum_{e \in \mathcal{C}}\left(\left(\vec {q}_{i}-\vec {q}_{j}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)^{2} = 
-\sum_{e \in \mathcal{C}}\left(\left(\alpha(\vec {p}_{n}-\vec {p}_{m}\right)+\vec{p}_m-\beta(\vec{p}_g - \vec{p}_h) - \vec{p}_h)^2-\left(l_{t}(e)\right)^{2}\right)^{2}
+\sum_{e \in \mathcal{C}}\left(\left(\mathbf {q}_{i}-\mathbf {q}_\mathbf{j}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)^{2} = 
+\sum_{e \in \mathcal{C}}\left(\left(\alpha(\mathbf {p}_{n}-\mathbf {p}_\mathbf{m}\right)+\mathbf{p}_m-\beta(\mathbf{p}_\mathbf{g} - \mathbf{p}_\mathbf{h}) - \mathbf{p}_\mathbf{h})^2-\left(l_{t}(e)\right)^{2}\right)^{2}
 $$
 
 其中$\vec p$是顶点坐标向量，$\vec q$是切平面与网格上三角面片的边的交点坐标向量。$l_t(d)$是实际测量线段的长度，$l_t(e)$是实际测量的围长，欧式距离就是两点坐标的直线距离直接计算就可以，而测地距离和围长是多个顶点距离之和，每一段的逼近长度需要单独计算出来。假定变形前后长度比例不变，可以通过下式算出逼近的长度：
@@ -45,9 +45,9 @@ $$l_t(e) = \frac{l_t(C)}{l_g(C)}l_g(e)$$
 - Minimization with respect to $W_{new}$  
 $X^{init}_{new}$可以通过学习的方法算出一个初始的模型，通过对三类尺寸的优化获得更精确的模型。优化方法采用拟牛顿法，需要对方程求导：$\nabla_{W_{new}}E = A^+\nabla_{p_i}E$
 
-$$\nabla_{\mathrm{pi}} E_{e}=\sum_{d \in D\left(p_{i}\right)} 4\left(\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)^{2}-\left(l_{t}(d)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{i}}-\mathrm{p}_{\mathrm{j}}\right)$$
+$$\nabla_{\mathrm{pi}} E_{e}=\sum_{d \in D\left(p_{i}\right)} 4\left(\left(\mathbf{p}_{\mathbf{i}}-\mathbf{p}_{\mathbf{j}}\right)^{2}-\left(l_{t}(d)\right)^{2}\right)\left(\mathbf{p}_{\mathbf{i}}-\mathbf{p}_{\mathbf{j}}\right)$$
 
-$$\nabla_{\mathrm{pi}} E_{g}=\sum_{e \in P\left(p_{i}\right)} 4\left(\left(\mathrm{p}_{\mathrm{k}}-\mathrm{p}_{\mathrm{l}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathrm{p}_{\mathrm{k}}-\mathrm{p}_{\mathrm{l}}\right)$$
+$$\nabla_{\mathrm{pi}} E_{g}=\sum_{e \in P\left(p_{i}\right)} 4\left(\left(\mathbf{p}_{\mathbf{k}}-\mathbf{p}_{\mathbf{l}}\right)^{2}-\left(l_{t}(e)\right)^{2}\right)\left(\mathbf{p}_{\mathbf{k}}-\mathbf{p}_{\mathbf{l}}\right)$$
 
 $$
 \nabla_{\mathrm{pi}} E_{c}=*
