@@ -15,7 +15,7 @@ $$X_{new} = AW_{new}+\mu \tag{2}$$
 $$X_{new} = ABP_{new}+\mu \tag{3}$$
 
 ## 模型微调
-### 算法总体流程
+### 算法概述
 已知通过学习方法获取的一个初始模型$X_{new}^{init}$ $\Rightarrow$ 将$W$看做关于$X_{new}^{init}$的函数：$W_{new} = A^{+}(X^{init}_{new} - \mu)$，通过优化$X_{new}^{init}$生成更优的$W_{new}$$\Rightarrow$将$W_{new}$带入回归模型得到新的初始模型$X_{new}^{pca}=AW_{new}+\mu$$\Rightarrow$对$X_{new}^{pca}$进行相同的尺寸优化，但是要加上保形能量项$E=(1-\lambda)E_m+\lambda E_s$,得到最终结果$X_{new}$
 ### 算法细节
 测量的数据分为三类，欧式距离值，测地距离值和围长值，对于每个待求的网格$X_i$，在网格上对应的求出的数据尽量和真实值保持一致，这就是一个最小化能量函数的问题 
@@ -69,9 +69,68 @@ $$
 
 将顶点初始化为上一步中求得的$X_{new}^{pca}$，这一步的整体能量函数可以表示为$E=(1-\lambda)E_m+\lambda E_s$。
 
-## 问题
-为何不直接对$X_{new}^{init}$加上保形能量，一步到位，还要重新生成一个新的PCA权$W$。再对新的模型进行重复的优化过程。
 
 ## 实现细节
+### 求平面与模型的交点
 
+#### 算法概述
+对每条边设置访问标记，遍历所有边，对所有边进行相交检测，找到一条相交的边$\Rightarrow$ 从该边开始，用halfedge进行遍历操作，对所在面三条边进行相交检测，如果halfedge对应边相交，跳到其对边继续进行遍历，直到对边等于起始半边$\Rightarrow$ 算法结束会得到三个点集，计算三个点集的边长和，取其最大的
+<div  align="center">    
+<img src="https://gitee.com//dominic_z/markdown_picbed/raw/master/img/20200706090423.png" width = "40%"/>
+</div>
 
+#### 相交检测
+平面与模型相交问题的本质是线段与平面相交的问题。在讨论线段与平面相交问题前，先讨论一般的情况，即直线与平面相交的问题。空间中平面$\pi$可以由顶点$V$和一个法向量$n$来描述，直线$L = P(s) = P_0 + s(P_1-P_0) = P_0+su$。
+- 直线与平面平行  
+直线与平面平行有两种情况，一种完全在平面内，一种不在平面内。暂且不考虑完全在平面内的情况。直线平行于平面数学上的表达为平面法线与直线垂直：
+$$n\cdot u = 0$$
+- 直线与平面相交  
+
+<div  align="center">    
+<img src="https://gitee.com//dominic_z/markdown_picbed/raw/master/img/59a9107f61848.jpg" width = "40%"/>
+</div>
+
+设交点为$P(s_i)$,$w = P_0-V_0$,则$P(s)-V_0 = w+su$垂直于面法向$n$，即：
+$$n\cdot (w+su) = 0$$
+$$s_i = \frac{-n\cdot w}{n\cdot u} = \frac{n\cdot(V_0 - P_{0})}{n\cdot (P_1 - P_0)}$$
+
+从直线相交的情况，我们可以发现，只要保证$s$这个伸缩因子在$[0-1]$之间就能确定线段与平面相交，接下来讨论线段与平面相交的情况
+- 线段与平面相交  
+$$0\leq s_i \leq 1$$
+
+#### 点集结果
+
+<div  align="center">    
+<img src="https://gitee.com//dominic_z/markdown_picbed/raw/master/img/asda;fnjalifjlao;fj.png" width = "50%"/>
+</div>
+
+### 由所有交点构成凸包
+解决二维凸包问题，有很多成熟的算法，比如GrahamScan,QuickHull,Chan's Algorithm等等。GrahamScan实现最简便，但是不能很好的解决多点共线的情况。但是因为点集是近凸包的，是在模型表面收集的点，所以没有三点共线的情况，为了方便实现所以采用GrahamScan算法。
+
+#### GrahamScan
+Graham's Scan尝试先将所有点依照时针顺序排好，再来做绕行-圈的动作，绕行途中顺便排除凸包内部的点，如此就不必以穷举所有点的方式来寻找最外围的点。
+
+<div  align="center">    
+<img src="https://gitee.com//dominic_z/markdown_picbed/raw/master/img/GrahamsScan1.png" width = "40%"/>
+</div>
+
+要让所有点依照顺时针顺序排好，只要将中心点设定在凸包内部或者凸包上，然后让各点依照角度排序即可。但是不能将中心点设置在凸包外部，如果把中心点设定在凸包外部，结果就不一定是顺时针顺序了。包覆时必须按照时顺时针，才能确保结果正确。
+
+<div  align="center">    
+<img src="https://gitee.com//dominic_z/markdown_picbed/raw/master/img/GrahamsScan2.png" width = "40%"/>
+</div>
+
+点集中的点与中心点做叉积运算，对点集的点进行排序，遇到共线的情况，按照离中心点距离排序，可以正序可以倒序，但是不可以随意排序。
+
+<div  align="center">    
+<img src="https://gitee.com//dominic_z/markdown_picbed/raw/master/img/GrahamsScan4.png" width = "40%"/>
+</div>
+
+每次加入新点，都要与已在凸包的两个点进行Toleft检测，如果在外侧，就加入凸包，并且弹出最上面的点，凹陷的点必定不是凸包上的顶点。如果在内测，就将其加入凸包。
+
+<div  align="center">    
+<img src="https://gitee.com//dominic_z/markdown_picbed/raw/master/img/GrahamsScan5.png" width = "40%"/>
+</div>
+
+## 问题
+生成凸包算法，可能toleft检测有些问题，最后的结果不太对。
