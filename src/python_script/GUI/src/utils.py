@@ -1,7 +1,7 @@
 import numpy as np
 
 
-MODEL_DIR = "./release_model"
+MODEL_DIR = "../release_model"
 V_NUM = 12500
 F_NUM = 25000
 M_NUM = 19

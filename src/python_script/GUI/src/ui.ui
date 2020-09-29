@@ -21,136 +21,21 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="1" rowspan="4">
-     <widget class="QWidget" name="measure" native="true">
-      <property name="enabled">
-       <bool>true</bool>
+    <item row="1" column="0">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <property name="minimumSize">
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
        <size>
-        <width>250</width>
-        <height>0</height>
+        <width>40</width>
+        <height>20</height>
        </size>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="autoFillBackground">
-       <bool>false</bool>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <widget class="QWidget" name="widget_5" native="true">
-       <property name="geometry">
-        <rect>
-         <x>9</x>
-         <y>9</y>
-         <width>232</width>
-         <height>38</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="minimumSize">
-           <size>
-            <width>56</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="lineWidth">
-           <number>1</number>
-          </property>
-          <property name="text">
-           <string>Measure01</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSlider" name="horizontalSlider01">
-          <property name="styleSheet">
-           <string notr="true">QSlider::handle:horizontal{width:15px;background-color:rgb(255,255,255);margin:-6px 0px -6px 0px;border-radius:5px;}
-QSlider::groove:horizontal{height:2px;background-color:rgb(219,219,219);}
-QSlider::add-page:horizontal{background-color:rgb(219,219,219);}
-QSlider::sub-page:horizontal{background-color:rgb(233,143,36);}</string>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="doubleSpinBox01">
-          <property name="styleSheet">
-           <string notr="true">QDoubleSpinBox {
-border-radius:4px;
-}</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="widget_6" native="true">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>70</y>
-         <width>232</width>
-         <height>38</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="minimumSize">
-           <size>
-            <width>56</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="lineWidth">
-           <number>1</number>
-          </property>
-          <property name="text">
-           <string>Measure01</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSlider" name="horizontalSlider_2">
-          <property name="styleSheet">
-           <string notr="true">QSlider::handle:horizontal{width:15px;background-color:rgb(255,255,255);margin:-6px 0px -6px 0px;border-radius:5px;}
-QSlider::groove:horizontal{height:2px;background-color:rgb(219,219,219);}
-QSlider::add-page:horizontal{background-color:rgb(219,219,219);}
-QSlider::sub-page:horizontal{background-color:rgb(233,143,36);}</string>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
-          <property name="styleSheet">
-           <string notr="true">QDoubleSpinBox {
-border-radius:4px;
-}</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
+     </spacer>
     </item>
     <item row="0" column="2">
      <spacer name="horizontalSpacer_2">
@@ -168,340 +53,8 @@ border-radius:4px;
       </property>
      </spacer>
     </item>
-    <item row="0" column="3" rowspan="3">
-     <widget class="QWidget" name="maya" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>300</width>
-        <height>400</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="5" rowspan="4">
-     <widget class="QWidget" name="predict" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>250</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QWidget" name="widget" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_25">
-          <item>
-           <widget class="QLabel" name="label_20">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QWidget" name="widget_2" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_26">
-          <item>
-           <widget class="QLabel" name="label_21">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_2"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QWidget" name="widget_3" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_27">
-          <item>
-           <widget class="QLabel" name="label_22">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_3"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QWidget" name="widget_4" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_28">
-          <item>
-           <widget class="QLabel" name="label_23">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_4"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QWidget" name="widget_24" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_29">
-          <item>
-           <widget class="QLabel" name="label_24">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_5"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QWidget" name="widget_25" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_30">
-          <item>
-           <widget class="QLabel" name="label_25">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_6"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QWidget" name="widget_26" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_31">
-          <item>
-           <widget class="QLabel" name="label_26">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_7"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QWidget" name="widget_27" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_32">
-          <item>
-           <widget class="QLabel" name="label_27">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_8"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QWidget" name="widget_28" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_33">
-          <item>
-           <widget class="QLabel" name="label_28">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_9"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QWidget" name="widget_29" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_34">
-          <item>
-           <widget class="QLabel" name="label_29">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_10"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <widget class="QWidget" name="widget_30" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_35">
-          <item>
-           <widget class="QLabel" name="label_30">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_11"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="11" column="0">
-        <widget class="QWidget" name="widget_31" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_36">
-          <item>
-           <widget class="QLabel" name="label_31">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_12"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="12" column="0">
-        <widget class="QWidget" name="widget_32" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_37">
-          <item>
-           <widget class="QLabel" name="label_32">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_13"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="13" column="0">
-        <widget class="QWidget" name="widget_33" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_38">
-          <item>
-           <widget class="QLabel" name="label_33">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_14"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="14" column="0">
-        <widget class="QWidget" name="widget_34" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_39">
-          <item>
-           <widget class="QLabel" name="label_34">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_15"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="15" column="0">
-        <widget class="QWidget" name="widget_35" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_40">
-          <item>
-           <widget class="QLabel" name="label_35">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_16"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="16" column="0">
-        <widget class="QWidget" name="widget_36" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_41">
-          <item>
-           <widget class="QLabel" name="label_36">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_17"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="17" column="0">
-        <widget class="QWidget" name="widget_37" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_42">
-          <item>
-           <widget class="QLabel" name="label_37">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_18"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="18" column="0">
-        <widget class="QWidget" name="widget_38" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_43">
-          <item>
-           <widget class="QLabel" name="label_38">
-            <property name="text">
-             <string>Measure01</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_19"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <spacer name="horizontalSpacer">
+    <item row="2" column="6">
+     <spacer name="horizontalSpacer_3">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -516,8 +69,8 @@ border-radius:4px;
       </property>
      </spacer>
     </item>
-    <item row="2" column="6">
-     <spacer name="horizontalSpacer_3">
+    <item row="3" column="4">
+     <spacer name="horizontalSpacer_4">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -551,6 +104,86 @@ border-radius:4px;
          </property>
         </spacer>
        </item>
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="radioButton">
+         <property name="styleSheet">
+          <string notr="true">/*RadioButton样式设置*/
+QRadioButton::indicator { 
+	width: 17px;
+	height: 17px;
+}
+/*单选框未选中样式*/
+QRadioButton::indicator::unchecked {
+	
+	image: url(:/img/source/unchecked.png);
+}
+/*单选框选中样式*/
+QRadioButton::indicator::checked { 
+	image: url(:/img/source/checked.png);
+}
+/*RadioButton和checkbox字体和间距设置*/
+QRadioButton{
+	spacing: 5px;
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+
+</string>
+         </property>
+         <property name="text">
+          <string>Male</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" colspan="2">
+        <spacer name="horizontalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>95</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="4">
+        <widget class="QRadioButton" name="radioButton_2">
+         <property name="styleSheet">
+          <string notr="true">/*RadioButton样式设置*/
+QRadioButton::indicator { 
+	width: 17px;
+	height: 17px;
+}
+/*单选框未选中样式*/
+QRadioButton::indicator::unchecked {
+	
+	image: url(:/img/source/unchecked.png);
+}
+/*单选框选中样式*/
+QRadioButton::indicator::checked { 
+	image: url(:/img/source/checked.png);
+}
+/*RadioButton和checkbox字体和间距设置*/
+QRadioButton{
+	spacing: 5px;
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+
+</string>
+         </property>
+         <property name="text">
+          <string>Female</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="5">
         <spacer name="horizontalSpacer_6">
          <property name="orientation">
@@ -567,74 +200,2034 @@ border-radius:4px;
          </property>
         </spacer>
        </item>
-       <item row="0" column="1">
-        <widget class="QRadioButton" name="radioButton">
-         <property name="text">
-          <string>Male</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="4">
-        <widget class="QRadioButton" name="radioButton_2">
-         <property name="text">
-          <string>Female</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <spacer name="horizontalSpacer_7">
+       <item row="1" column="0">
+        <spacer name="horizontalSpacer_8">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Preferred</enum>
+          <enum>QSizePolicy::Fixed</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>95</width>
-           <height>20</height>
+           <width>37</width>
+           <height>17</height>
           </size>
          </property>
         </spacer>
        </item>
-       <item row="1" column="1">
+       <item row="1" column="1" colspan="2">
         <widget class="QPushButton" name="pushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="styleSheet">
-          <string notr="true"/>
+          <string notr="true">/*RadioButton和checkbox字体和间距设置*/
+QPushButton{
+    text-align: center;
+	border-radius:2px;
+	spacing: 5px;
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+	background-color:rgb(223,134,30);
+}
+QPushButton{
+	padding-top:5px;
+	padding-right: 15px; 
+	padding-bottom: 5px; 
+	padding-left: 15px;
+}
+</string>
          </property>
          <property name="text">
           <string>Reset</string>
          </property>
         </widget>
        </item>
+       <item row="1" column="3">
+        <spacer name="horizontalSpacer_15">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>13</width>
+           <height>17</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="1" column="4">
         <widget class="QPushButton" name="pushButton_2">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="styleSheet">
-          <string notr="true"/>
+          <string notr="true">/*RadioButton和checkbox字体和间距设置*/
+QPushButton{
+    text-align: center;
+	border-radius:2px;
+	spacing: 5px;
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+	background-color:rgb(223,134,30);
+}
+QPushButton{
+	padding-top:5px;
+	padding-right: 15px; 
+	padding-bottom: 5px; 
+	padding-left: 15px;
+}
+</string>
          </property>
          <property name="text">
           <string>Predict</string>
          </property>
         </widget>
        </item>
+       <item row="1" column="5">
+        <spacer name="horizontalSpacer_10">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>37</width>
+           <height>17</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
     </item>
-    <item row="3" column="4">
-     <spacer name="horizontalSpacer_4">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
+    <item row="0" column="3" rowspan="3">
+     <widget class="QWidget" name="maya" native="true">
+      <property name="minimumSize">
        <size>
-        <width>40</width>
-        <height>20</height>
+        <width>300</width>
+        <height>400</height>
        </size>
       </property>
-     </spacer>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <zorder>measure</zorder>
+      <zorder>widget_5</zorder>
+     </widget>
+    </item>
+    <item row="0" column="5" rowspan="4">
+     <widget class="QGroupBox" name="predict">
+      <property name="minimumSize">
+       <size>
+        <width>250</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox{
+	border:2px solid  rgb(223,134,30);
+	border-radius:8px;
+}
+</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QWidget" name="widget" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_25">
+          <item>
+           <widget class="QLabel" name="label_20">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="15" column="0">
+        <widget class="QWidget" name="widget_35" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_40">
+          <item>
+           <widget class="QLabel" name="label_35">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_16">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="16" column="0">
+        <widget class="QWidget" name="widget_36" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_41">
+          <item>
+           <widget class="QLabel" name="label_36">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_17">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="18" column="0">
+        <widget class="QWidget" name="widget_38" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_43">
+          <item>
+           <widget class="QLabel" name="label_38">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_19">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="17" column="0">
+        <widget class="QWidget" name="widget_37" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_42">
+          <item>
+           <widget class="QLabel" name="label_37">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_18">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QWidget" name="widget_24" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_29">
+          <item>
+           <widget class="QLabel" name="label_24">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_5">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QWidget" name="widget_4" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_28">
+          <item>
+           <widget class="QLabel" name="label_23">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_4">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QWidget" name="widget_25" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_30">
+          <item>
+           <widget class="QLabel" name="label_25">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_6">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QWidget" name="widget_26" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_31">
+          <item>
+           <widget class="QLabel" name="label_26">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_7">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QWidget" name="widget_28" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_33">
+          <item>
+           <widget class="QLabel" name="label_28">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_9">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QWidget" name="widget_27" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_32">
+          <item>
+           <widget class="QLabel" name="label_27">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_8">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QWidget" name="widget_29" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_34">
+          <item>
+           <widget class="QLabel" name="label_29">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_10">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QWidget" name="widget_30" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_35">
+          <item>
+           <widget class="QLabel" name="label_30">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_11">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="11" column="0">
+        <widget class="QWidget" name="widget_31" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_36">
+          <item>
+           <widget class="QLabel" name="label_31">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_12">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="12" column="0">
+        <widget class="QWidget" name="widget_32" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_37">
+          <item>
+           <widget class="QLabel" name="label_32">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_13">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="14" column="0">
+        <widget class="QWidget" name="widget_34" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_39">
+          <item>
+           <widget class="QLabel" name="label_34">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_15">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="13" column="0">
+        <widget class="QWidget" name="widget_33" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_38">
+          <item>
+           <widget class="QLabel" name="label_33">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_14">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QWidget" name="widget_2" native="true">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_26">
+          <item>
+           <widget class="QLabel" name="label_21">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_2">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QWidget" name="widget_3" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_27">
+          <item>
+           <widget class="QLabel" name="label_22">
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_3">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+	background-color:rgb(153,153,153)
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="1" rowspan="4">
+     <widget class="QGroupBox" name="measure">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>280</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox{
+	border:2px solid  rgb(223,134,30);
+	border-radius:8px;
+}
+</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QWidget" name="widget_5" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_6" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_2">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_2">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_7" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_3">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_3">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_8" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_4">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_4">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_9" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_5">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_5">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_10" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_6">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_6">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_11" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QLabel" name="label_7">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_7">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_7">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_12" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QLabel" name="label_8">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_8">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_8">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_13" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QLabel" name="label_9">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_9">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_9">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_14" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <widget class="QLabel" name="label_10">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_10">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_10">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_15" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <item>
+           <widget class="QLabel" name="label_11">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_11">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_11">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_16" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_12">
+          <item>
+           <widget class="QLabel" name="label_12">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_12">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_12">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_17" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_13">
+          <item>
+           <widget class="QLabel" name="label_13">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_13">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_13">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_18" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_14">
+          <item>
+           <widget class="QLabel" name="label_14">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_14">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_14">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_19" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_15">
+          <item>
+           <widget class="QLabel" name="label_15">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_15">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_15">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_20" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_16">
+          <item>
+           <widget class="QLabel" name="label_16">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_16">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_16">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_21" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_17">
+          <item>
+           <widget class="QLabel" name="label_17">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_17">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_17">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_22" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_18">
+          <item>
+           <widget class="QLabel" name="label_18">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_18">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_18">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_23" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_19">
+          <item>
+           <widget class="QLabel" name="label_19">
+            <property name="minimumSize">
+             <size>
+              <width>56</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel{
+	font:10pt &quot;hack&quot;;
+	font-weight:bold;
+	color :rgb(255,255,255);
+}
+</string>
+            </property>
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
+            <property name="text">
+             <string>Measure01</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider01_19">
+            <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal{
+	width:15px;
+	background-color:rgb(223,134,30);
+	margin:-6px 0px -6px 0px;
+	border-radius:5px;
+}
+QSlider::groove:horizontal{
+	height:2px;
+	background-color:rgb(219,219,219);
+}
+QSlider::add-page:horizontal{
+	background-color:rgb(219,219,219);
+}
+QSlider::sub-page:horizontal{
+background-color:rgb(233,143,36);
+}</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_19">
+            <property name="styleSheet">
+             <string notr="true">QDoubleSpinBox {
+border-radius:4px;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
    <zorder>maya</zorder>
@@ -686,6 +2279,8 @@ border-radius:4px;
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="img.qrc"/>
+ </resources>
  <connections/>
 </ui>
