@@ -7,7 +7,7 @@
 //using namespace std;
 //using Point = pmp::Point;
 //
-//int main() 
+//int main()
 //{
 //	SurfaceMesh mesh;
 //	Vertex v0, v1, v2, v3;
@@ -25,4 +25,4 @@
 //
 //	return 0;
 //}
-
+//

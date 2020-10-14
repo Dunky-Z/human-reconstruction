@@ -9,7 +9,7 @@ Reshaper::~Reshaper() {}
 /*!
 *@brief  读取控制点文件，并将控制点保存进数组
 *@param[out]
-*@param[in]  std::vector<std::vector<std::vector<double>>> & control_points  保存控制点的数组
+*@param[in]  std::vector<std::vector<std::vector<double>>> & control_points  保存控制点的数组 [尺寸个数，每个尺寸包含的控制点，每个控制点]
 *@return     void
 */void Reshaper::SaveBinControlPoint(std::vector<std::vector<std::vector<double>>>& control_points)
 {
@@ -170,7 +170,7 @@ void Reshaper::SaveBinEdge(std::vector<std::vector<std::vector<double>>>& contro
 
 void Reshaper::FitMeasurements(Eigen::Matrix3Xd& res_verts, std::vector<std::vector<int>> point_idx, const Eigen::Matrix3Xd &vertices, const Eigen::MatrixXd measurements)
 {
-	const int num_measure = point_idx.size()-1;
+	const int num_measure = point_idx.size() - 1;	//去除第一个体重的信息
 	//保存每个尺寸的边数量
 	std::vector<int> edge;
 	for (auto& num_v : point_idx)
@@ -202,13 +202,13 @@ void Reshaper::FitMeasurements(Eigen::Matrix3Xd& res_verts, std::vector<std::vec
 
 		for (int j = 0; j < edge[i]; ++j)
 		{
-			const int edge_0 = point_idx[i+1][j % edge[i]];
-			const int edge_1 = point_idx[i+1][(j + 1) % edge[i]];
+			const int edge_0 = point_idx[i + 1][j % edge[i]];
+			const int edge_1 = point_idx[i + 1][(j + 1) % edge[i]];
 			const Eigen::Vector3d v0 = vertices.col(edge_0);
 			const Eigen::Vector3d v1 = vertices.col(edge_1);
 			const Eigen::Vector3d edge_01 = v1 - v0;
 			const double edge_len = edge_01.norm();
-			const Eigen::Vector3d auxd = (edge_01 / edge_len) * (measurements(i+1, 0) / edge[i]);
+			const Eigen::Vector3d auxd = (edge_01 / edge_len) * (measurements(i + 1, 0) / edge[i]);
 
 			for (int k = 0; k < 3; ++k)
 			{
@@ -221,7 +221,7 @@ void Reshaper::FitMeasurements(Eigen::Matrix3Xd& res_verts, std::vector<std::vec
 		row += edge[i] * 3;
 	}
 
-	A.setFromTriplets(triplets.begin(), triplets.end());	
+	A.setFromTriplets(triplets.begin(), triplets.end());
 	auto AT = A.transpose();
 	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
 	//solver.compute(A * AT);
