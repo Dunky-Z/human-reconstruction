@@ -3,9 +3,11 @@
 #include <iostream>
 #include <Eigen/Dense> 
 
+
 #include "utils.h"
 #include "measure.h"
 #include "reshaper.h"
+#include "fit_measurements.h"
 
 int main()
 {
@@ -14,6 +16,8 @@ int main()
 	std::vector<std::vector<std::vector<double>>> control_points;
 	Reshaper reshaper;
 	Measure measure;
+	SurfaceMesh mesh;
+	mesh.read((DATASET_PATH + "1_.obj").c_str());
 	reshaper.SaveBinControlPoint(control_points);
 	//保存模型顶点，面片信息
 	//reshaper.SaveVertFacetInBin();
@@ -28,14 +32,18 @@ int main()
 	Eigen::MatrixXd measurelist;
 	//measure.ConvertMeasure(verts, facets, control_points, measurelist);
 	binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "measure_list").c_str(), measurelist);
-	Eigen::VectorXd one_measure = measurelist.col(0);
+	Eigen::VectorXd one_measure = measurelist.col(0);//取出一个模型的尺寸信息
 	Eigen::Matrix3Xd res;
-	Eigen::MatrixXd one_verts = verts.col(0);
+	Eigen::MatrixXd one_verts = verts.col(0);//取出一个模型的顶点信息
 	one_verts.resize(3, verts.rows() / 3);
 	//保存边信息
 	std::vector<std::vector<int>> point_idx;
 	reshaper.SaveBinEdge(control_points, point_idx);
-	reshaper.FitMeasurements(res, point_idx, one_verts, one_measure);
+
+	Eigen::SparseMatrix<double> C;
+	Eigen::VectorXd b;
+	CaculateCoefficientMatrix(C, point_idx, one_verts, one_measure, b);
+	FitMeasurements(res, point_idx, one_verts, one_measure);
 
 	cout << res.leftCols(20) << endl;
 

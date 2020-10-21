@@ -200,7 +200,7 @@ void Reshaper::FitMeasurements(Eigen::Matrix3Xd& res_verts, std::vector<std::vec
 	for (int i = 0; i < num_measure; ++i)
 	{
 
-		for (int j = 0; j < edge[i]; ++j)
+		for (int j = 0; j <  [i]; ++j)
 		{
 			const int edge_0 = point_idx[i + 1][j % edge[i]];
 			const int edge_1 = point_idx[i + 1][(j + 1) % edge[i]];
@@ -217,7 +217,7 @@ void Reshaper::FitMeasurements(Eigen::Matrix3Xd& res_verts, std::vector<std::vec
 				b(row + j * 3 + k) = auxd[k];
 				std::cout << row + j * 3 + k << " " << edge_0 * 3 + k << " " << auxd[k] << std::endl;
 			}
-		}
+		} 
 		row += edge[i] * 3;
 	}
 

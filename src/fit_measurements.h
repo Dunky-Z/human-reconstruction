@@ -17,3 +17,5 @@ void CalcGeodesicGradient(Eigen::VectorXd& gradient, Matrix3Xd vertices, Eigen::
 float CalcTargetLen(Eigen::MatrixXd& measurements, const float& cur_len, const int& index);
 void CalcEnergy(double& energy, Eigen::Matrix3Xd& vertices);
 void CaculateLaplacianCotMatrix(const SurfaceMesh& mesh, Eigen::SparseMatrix<double> & L);
+void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::vector<int>>& point_idx, const Eigen::Matrix3Xd &vertices, const Eigen::MatrixXd& measurements,
+	Eigen::VectorXd& b);

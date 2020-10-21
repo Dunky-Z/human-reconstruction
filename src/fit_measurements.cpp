@@ -19,12 +19,6 @@ std::vector<std::vector<int>> point_idx;
 std::vector<std::vector<std::vector<double>>> control_points;
 
 
-int main()
-{
-	Reshaper reshaper;
-	Measure measure;
-	
-}
 
 void CalcEnergy(double& enyg, Eigen::Matrix3Xd& vertices)
 {
@@ -138,7 +132,7 @@ void CaculateLaplacianCotMatrix(const SurfaceMesh& mesh, Eigen::SparseMatrix<dou
 	std::vector<Tri> tripletlist;
 	tripletlist.reserve(20);
 	const int p_num = mesh.n_vertices();
-	L.resize(p_num, p_num);
+	L.resize(3 * p_num, 3 * p_num);
 	for (auto fit : mesh.faces())
 	{
 		vec3 p[3];
@@ -154,27 +148,28 @@ void CaculateLaplacianCotMatrix(const SurfaceMesh& mesh, Eigen::SparseMatrix<dou
 		{
 			int j = (i + 1) % 3, k = (j + 1) % 3;
 			cot[i] = dot(p[j] - p[i], p[k] - p[i]) / norm(cross(p[j] - p[i], p[k] - p[i]));
-
-			tripletlist.push_back(Tri(id[j], id[k], -0.5 * cot[i]));
-			tripletlist.push_back(Tri(id[k], id[j], -0.5 * cot[i]));
+			for (int l = 0; l < 3; ++l)
+			{
+				tripletlist.push_back(Tri(id[j] + l, id[k] + l, -0.5 * cot[i]));
+				tripletlist.push_back(Tri(id[k] + l, id[j] + l, -0.5 * cot[i]));
+			}
 		}
 		for (int i = 0; i < 3; ++i)
 		{
-			tripletlist.push_back(Tri(id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3])));
+			for (int l = 0; l < 3; ++l)
+			{
+				tripletlist.push_back(Tri(id[i] + l, id[i] + l, 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3])));
+			}
 		}
 	}
 	L.setFromTriplets(tripletlist.begin(), tripletlist.end());
 }
 
-void CaculateCoefficientMatrix(const SurfaceMesh& mesh, Eigen::SparseMatrix<double> & A)
+
+void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::vector<int>>& point_idx, const Eigen::Matrix3Xd &vertices, const Eigen::MatrixXd& measurements, 
+	Eigen::VectorXd& b)
 {
-
-}
-
-
-void Reshaper::FitMeasurements(Eigen::Matrix3Xd& res_verts, std::vector<std::vector<int>> point_idx, const Eigen::Matrix3Xd &vertices, const Eigen::MatrixXd measurements)
-{
-	const int num_measure = point_idx.size() - 1;	//去除第一个体重的信息
+	const int num_measure = point_idx.size();
 	//保存每个尺寸的边数量
 	std::vector<int> edge;
 	for (auto& num_v : point_idx)
@@ -191,19 +186,14 @@ void Reshaper::FitMeasurements(Eigen::Matrix3Xd& res_verts, std::vector<std::vec
 	}
 	//所有边的数量
 	int num_edge_all = std::accumulate(edge.begin(), edge.end(), 0);
-
 	typedef Eigen::Triplet<double> Tri;
 	std::vector<Tri> triplets;
 	triplets.reserve(6 * num_edge_all);
-	Eigen::VectorXd b;
 	b.setConstant(3 * num_edge_all, 0);
-	Eigen::SparseMatrix<double> A;
 	A.resize(3 * num_edge_all, 3 * vertices.cols());
-
 	int row = 0;
 	for (int i = 0; i < num_measure; ++i)
 	{
-
 		for (int j = 0; j < edge[i]; ++j)
 		{
 			const int edge_0 = point_idx[i + 1][j % edge[i]];
@@ -212,8 +202,7 @@ void Reshaper::FitMeasurements(Eigen::Matrix3Xd& res_verts, std::vector<std::vec
 			const Eigen::Vector3d v1 = vertices.col(edge_1);
 			const Eigen::Vector3d edge_01 = v1 - v0;
 			const double edge_len = edge_01.norm();
-			const Eigen::Vector3d auxd = (edge_01 / edge_len) * (measurements(i + 1, 0) / edge[i]);
-
+			const Eigen::Vector3d auxd = (edge_01 / edge_len) * CalcTargetLen(measurements, edge_len, i + 1);
 			for (int k = 0; k < 3; ++k)
 			{
 				triplets.push_back(Tri(row + j * 3 + k, edge_0 * 3 + k, -1));
@@ -224,9 +213,43 @@ void Reshaper::FitMeasurements(Eigen::Matrix3Xd& res_verts, std::vector<std::vec
 		}
 		row += edge[i] * 3;
 	}
-
 	A.setFromTriplets(triplets.begin(), triplets.end());
-	auto AT = A.transpose();
+}
+
+
+void FitMeasurements(Eigen::Matrix3Xd& res_verts, Eigen::SparseMatrix<double>& C, Eigen::SparseMatrix<double>& L, const Eigen::Matrix3Xd &vertices, Eigen::VectorXd& b2,
+	std::vector<std::vector<int>>& point_idx)
+{
+	const int num_measure = point_idx.size();
+	const int num_verts = vertices.cols();
+	Eigen::VectorXd v;
+	v.setConstant(3 * num_verts, 0);
+	//将顶点矩阵大小3*V转成3V*1
+	for (int i = 0; i < num_verts; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			v(3 * i + j) = vertices.coeff(0, i);
+			v(3 * i + j) = vertices.coeff(1, i);
+			v(3 * i + j) = vertices.coeff(2, i);
+		}
+	}
+	
+	// 根据laplace矩阵计算出所有点的的laplace坐标 3|V|*1
+	auto b1 = L * v;
+
+	//拼接b1和b2
+	Eigen::VectorXd b;
+	b.setConstant(3 * num_verts + 3 * num_measure, 0);
+	b.topRows(3 * num_verts) = b1;
+	b.topRows(3 * num_measure) = b2;
+
+	//拼接L和C 
+	Eigen::SparseMatrix<double> A(3 * num_verts + 3 * num_measure, 3 * num_verts);
+	A.topRows(3 * num_verts) = L;
+	A.bottomRows(3 * num_measure) = C;
+
+
 	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
 	//solver.compute(A * AT);
 	solver.compute(A.transpose() * A);
