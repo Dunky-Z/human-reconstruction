@@ -15,7 +15,7 @@
 
 const std::string DATASET_PATH = "D:/ITabc/ITabc/objDataSet/dataset/male_tmp/";
 //const std::string DATASET_PATH = "D:/ITabc/ITabc/objDataSet/dataset/male/";
-const std::string BIN_DATA_PATH = "./data/train_tmp/";
+const std::string BIN_DATA_PATH = "../data/";
 //const std::string BIN_DATA_PATH = "./data/train/male/";
 
 template<class Matrix>

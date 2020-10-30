@@ -2,16 +2,15 @@
 
 #include "fit_measurements.h"
 
-using namespace Eigen;
 using namespace pmp;
 using namespace std;
 
 
-const int M_NUM = 15;
+const int M_NUM = 19;
 const double step = 1;
 Eigen::Matrix3Xd verts;
 Eigen::Matrix3Xi faces;
-Eigen::MatrixXd input_m(M_NUM, 1);
+
 Eigen::VectorXd gradient;
 
 Eigen::MatrixXd measurements;
@@ -20,31 +19,31 @@ std::vector<std::vector<std::vector<double>>> control_points;
 
 
 
-void CalcEnergy(double& enyg, Eigen::Matrix3Xd& vertices)
-{
-	for (size_t i_ = 1, i = 1; i_ < point_idx.size(); ++i_)
-	{
-		//剔除三个围长
-		if (i_ == 2 || i_ == 3 || i_ == 4)
-		{
-			continue;
-		}
-		size_t n = point_idx[i_].size();
-		for (size_t j = 0; j < n - 1; ++j)
-		{
-			int id1 = point_idx[i_][j], id2 = point_idx[i_][j + 1];
-			pmp::vec3 p1; p1[0] = vertices.coeff(0, id1); p1[1] = vertices.coeff(1, id1); p1[2] = vertices.coeff(2, id1);
-			pmp::vec3 p2; p2[0] = vertices.coeff(0, id2); p2[1] = vertices.coeff(1, id2); p2[2] = vertices.coeff(2, id2);
-			double cur_len = distance(p1, p2);
-			double p = std::pow(cur_len, 2);
-			double l = std::pow(CalcTargetLen(measurements, cur_len, i), 2);
-			enyg = enyg + std::pow(p - l, 2);
-			std::cout << setprecision(15);
-			//std::cout << std::fixed << p << "  " << l << "  " << enyg << std::endl;
-		}
-		i++;
-	}
-}
+//void CalcEnergy(double& enyg, Eigen::Matrix3Xd& vertices)
+//{
+//	for (size_t i_ = 1, i = 1; i_ < point_idx.size(); ++i_)
+//	{
+//		//剔除三个围长
+//		if (i_ == 2 || i_ == 3 || i_ == 4)
+//		{
+//			continue;
+//		}
+//		size_t n = point_idx[i_].size();
+//		for (size_t j = 0; j < n - 1; ++j)
+//		{
+//			int id1 = point_idx[i_][j], id2 = point_idx[i_][j + 1];
+//			pmp::vec3 p1; p1[0] = vertices.coeff(0, id1); p1[1] = vertices.coeff(1, id1); p1[2] = vertices.coeff(2, id1);
+//			pmp::vec3 p2; p2[0] = vertices.coeff(0, id2); p2[1] = vertices.coeff(1, id2); p2[2] = vertices.coeff(2, id2);
+//			double cur_len = distance(p1, p2);
+//			double p = std::pow(cur_len, 2);
+//			double l = std::pow(CalcTargetLen(measurements, cur_len, i), 2);
+//			enyg = enyg + std::pow(p - l, 2);
+//			std::cout << setprecision(15);
+//			//std::cout << std::fixed << p << "  " << l << "  " << enyg << std::endl;
+//		}
+//		i++;
+//	}
+//}
 
 /*!
 *@brief  计算欧式距离的梯度
@@ -77,7 +76,7 @@ void CalcEnergy(double& enyg, Eigen::Matrix3Xd& vertices)
 *@param[in]  Eigen::MatrixXd measurements
 *@return     void
 */
-void CalcGeodesicGradient(Eigen::VectorXd& gradient, Matrix3Xd vertices, Eigen::MatrixXd& measurements)
+void CalcGeodesicGradient(Eigen::VectorXd& gradient, Matrix3Xd vertices, Eigen::MatrixXd& measurements, Eigen::MatrixXd& input_m)
 {
 	pmp::vec3 grad;
 	//从1开始因为poin_idx[0]是欧式距离
@@ -95,7 +94,7 @@ void CalcGeodesicGradient(Eigen::VectorXd& gradient, Matrix3Xd vertices, Eigen::
 			pmp::vec3 p1; p1[0] = vertices.coeff(0, id1); p1[1] = vertices.coeff(1, id1); p1[2] = vertices.coeff(2, id1);
 			pmp::vec3 p2; p2[0] = vertices.coeff(0, id2); p2[1] = vertices.coeff(1, id2); p2[2] = vertices.coeff(2, id2);
 			float cur_len = distance(p1, p2);
-			grad = 4 * (std::pow(cur_len, 2) - std::pow(CalcTargetLen(measurements, cur_len, i), 2))*(p1 - p2);
+			grad = 4 * (std::pow(cur_len, 2) - std::pow(CalcTargetLen(measurements, cur_len, i, input_m), 2))*(p1 - p2);
 			for (size_t k = 0; k < 3; ++k)
 			{
 				gradient(id1 * 3 + k) += grad[k];
@@ -114,7 +113,7 @@ void CalcGeodesicGradient(Eigen::VectorXd& gradient, Matrix3Xd vertices, Eigen::
 *@param[in]  int index  第index个尺寸
 *@return     float
 */
-float CalcTargetLen(Eigen::MatrixXd& measurements, const float& cur_len, const int& index)
+float CalcTargetLen(const Eigen::MatrixXd& measurements, const float& cur_len, const int& index, Eigen::MatrixXd& input_m)
 {
 	float target_len = (cur_len / measurements.coeff(index, 0))*(input_m.coeff(index, 0));
 	return target_len;
@@ -163,15 +162,17 @@ void CaculateLaplacianCotMatrix(const SurfaceMesh& mesh, Eigen::SparseMatrix<dou
 		}
 	}
 	L.setFromTriplets(tripletlist.begin(), tripletlist.end());
+	std::cout << "Calc Laplacian Done !" << std::endl;
 }
 
 
-void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::vector<int>>& point_idx, const Eigen::Matrix3Xd &vertices, const Eigen::MatrixXd& measurements, 
-	Eigen::VectorXd& b)
+void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::vector<int>>& point_idx, const Eigen::Matrix3Xd &vertices, const Eigen::MatrixXd& measurements,
+	Eigen::VectorXd& b, Eigen::MatrixXd& input_m)
 {
+	//18
 	const int num_measure = point_idx.size();
 	//保存每个尺寸的边数量
-	std::vector<int> edge;
+	std::vector<int> edge;//size = 17
 	for (auto& num_v : point_idx)
 	{
 		if (num_v.size() > 2)
@@ -180,10 +181,11 @@ void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::
 		}
 		else
 		{
-			//edge.push_back(1);
-			continue;
+			edge.push_back(1);
+			//continue;
 		}
 	}
+	cout << edge.size() << endl;
 	//所有边的数量
 	int num_edge_all = std::accumulate(edge.begin(), edge.end(), 0);
 	typedef Eigen::Triplet<double> Tri;
@@ -196,13 +198,24 @@ void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::
 	{
 		for (int j = 0; j < edge[i]; ++j)
 		{
-			const int edge_0 = point_idx[i + 1][j % edge[i]];
-			const int edge_1 = point_idx[i + 1][(j + 1) % edge[i]];
+			int edge_0;
+			int edge_1;
+			if (i == 0)
+			{
+				edge_0 = point_idx[i][j];
+				edge_1 = point_idx[i][j + 1];
+			}
+			else
+			{
+				edge_0 = point_idx[i][j % edge[i]];
+				edge_1 = point_idx[i][(j + 1) % edge[i]];
+			}
 			const Eigen::Vector3d v0 = vertices.col(edge_0);
 			const Eigen::Vector3d v1 = vertices.col(edge_1);
 			const Eigen::Vector3d edge_01 = v1 - v0;
 			const double edge_len = edge_01.norm();
-			const Eigen::Vector3d auxd = (edge_01 / edge_len) * CalcTargetLen(measurements, edge_len, i + 1);
+			cout << edge_len << endl;
+			const Eigen::Vector3d auxd = (edge_01 / edge_len) * CalcTargetLen(measurements, edge_len, i + 1, input_m);
 			for (int k = 0; k < 3; ++k)
 			{
 				triplets.push_back(Tri(row + j * 3 + k, edge_0 * 3 + k, -1));
@@ -211,6 +224,7 @@ void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::
 				std::cout << row + j * 3 + k << " " << edge_0 * 3 + k << " " << auxd[k] << std::endl;
 			}
 		}
+		cout << "第 " << i << "轮" << endl;
 		row += edge[i] * 3;
 	}
 	A.setFromTriplets(triplets.begin(), triplets.end());
@@ -221,6 +235,7 @@ void FitMeasurements(Eigen::Matrix3Xd& res_verts, Eigen::SparseMatrix<double>& C
 	std::vector<std::vector<int>>& point_idx)
 {
 	const int num_measure = point_idx.size();
+	cout << num_measure << endl;
 	const int num_verts = vertices.cols();
 	Eigen::VectorXd v;
 	v.setConstant(3 * num_verts, 0);
@@ -234,21 +249,26 @@ void FitMeasurements(Eigen::Matrix3Xd& res_verts, Eigen::SparseMatrix<double>& C
 			v(3 * i + j) = vertices.coeff(2, i);
 		}
 	}
-	
+
 	// 根据laplace矩阵计算出所有点的的laplace坐标 3|V|*1
 	auto b1 = L * v;
 
 	//拼接b1和b2
 	Eigen::VectorXd b;
 	b.setConstant(3 * num_verts + 3 * num_measure, 0);
-	b.topRows(3 * num_verts) = b1;
-	b.topRows(3 * num_measure) = b2;
+	for (int i = 0; i < 3 * num_verts; ++i)
+		b(i) = b1(i);
+	for (int j = 0; j < 3 * num_measure; ++j)
+		b(j + 3 * num_verts) = b2(j);
 
 	//拼接L和C 
 	Eigen::SparseMatrix<double> A(3 * num_verts + 3 * num_measure, 3 * num_verts);
-	A.topRows(3 * num_verts) = L;
-	A.bottomRows(3 * num_measure) = C;
-
+	for (int i = 0; i < 3 * num_verts; ++i)
+		for (int j = 0; j < 3 * num_verts; ++j)
+			A.coeffRef(i, j) = L.coeff(i, j);
+	for (int i = 3 * num_verts; i < 3 * num_verts + 3 * num_measure; ++i)
+		for (int j = 0; j < 3 * num_verts; ++j)
+			A.coeffRef(i, j) = C.coeff(i - 3 * num_verts, j);
 
 	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
 	//solver.compute(A * AT);
