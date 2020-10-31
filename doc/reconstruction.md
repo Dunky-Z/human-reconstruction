@@ -93,40 +93,58 @@ $$y = \sigma x + \mu$$
 
 #### 算法概述
 测量的数据分为三类，欧式距离值，测地距离值和围长值，对于每个待求的网格$X_i$，在网格上对应的求出的数据尽量和真实值保持一致，这就是一个最小化能量函数的问题 。对于欧式距离，给定目标长度$l_t(d)$，表示线段$d$两个端点$v_i$,$v_j$的欧式距离。能量函数可以定义为：
+
 $$
 E_{\mathcal{D}} = \sum_{d \in \mathcal{D}}\left(\|v_i - v_j \|^{2}-l_{t}(d)^{2}\right)^{2}
-$$其中$\mathcal{D}$就是所有欧式距离尺寸的集合，如身高。
+$$
+
+其中$\mathcal{D}$就是所有欧式距离尺寸的集合，如身高。
+
 对于测地距离，给定目标尺寸$l_t(P)$表示顶点$v_k,v_l$之间测地路径$P$的测地距离。我们用$l_g(P)$来表示$P$的真实测地距离。我们假定在变形前后，路径$P$上的每个边长$e$相对长度保持不变，有了这个假设，我们就可以得到每个边的目标边长，就可以将问题化成一个优化每条边长的问题。能量函数可以表示为：
+
 $$
 E_{\mathcal{P}} = \sum_{e \in \mathcal{P}}\left(\|v_k - v_l \|^{2}-l_{t}(e)^{2}\right)^{2}
 $$
+
 加入拉普拉斯能量全局保形，
+
 $$
 E =  \sum\left\|L\mathbf{V}' -  L\mathbf{V} \right\|^{2}+
 \sum_{d \in \mathcal{D}}\left(\|v_i - v_j \|^{2}-l_{t}(d)^{2}\right)^{2}
 +
  \sum_{e \in \mathcal{P}}\left(\|v_k - v_l \|^{2}-l_{t}(e)^{2}\right)^{2}
 $$
+
 其中$\mathcal{D},\mathcal{P}$分别为欧式距离边集合，测地距离边集合。 $V$为原模型顶点坐标，$V'$为目标模型顶点坐标。假定变形前后长度比例不变，可以通过下式算出逼近的长度：
 
 $$l_t(v) = \frac{l_t(P)}{l_g(P)}l_g(e)$$
 
 将能量方程降为2次，设$\|\mathbf{d}\|=l_t(d)$，$\mathbf{v}_{ij}:=v_i - v_j$，重写能量函数$E_{\mathcal{D}}$:
+
 $$
 E_{\mathcal{D}} = \sum_{d \in \mathcal{D}}\left(\|\mathbf{v}_{ij}\|-\|\mathbf{d}\|\right)^{2}
-$$由反三角不等式可得：
+$$
+
+由反三角不等式可得：
+
 $$
 E_{\mathcal{D}} = \sum_{d \in \mathcal{D}}\left(\|\mathbf{v}_{ij}\|-\|\mathbf{d}\|\right)^{2} \leq \sum_{d \in \mathcal{D}}\|\mathbf{v}_{ij}-\mathbf{d}\|^{2}
 $$
+
 将$\mathbf{d}=l_t{d}(\mathbf{v}_{ij}/\|\mathbf{v}_{ij}\|)$替换不等式右边的$\mathbf{d}$:
+
 $$
 \sum_{d \in \mathcal{D}}\|\mathbf{v}_{ij}-l_t{d}\frac{\mathbf{v}_{ij}}{\|\mathbf{v}_{ij}\|}\|^{2}=\sum_{d \in \mathcal{D}}\|  \frac{\mathbf{v}_{ij}}{\|\mathbf{v}_{ij}\|}(\|\mathbf{v}_{ij}\| - l_t{d})  \|^{2} = \sum_{d \in \mathcal{D}}(\|\mathbf{v}_{ij}\| - l_t{d})^{2}
 $$
+
 因此当$\mathbf{d}=l_t{d}(\mathbf{v}_{ij}/\|\mathbf{v}_{ij}\|)$时，方程左右都有相同的极小值。因此重写能量函数为：
+
 $$
 E_{\mathcal{D}} = \sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}\|
 $$
+
 同理可以改写测地距离的能量函数，最终能量函数函数为：
+
 $$
 E =  \sum\left\|\mathcal{L}\mathbf{V}' -  \mathcal{L}\mathbf{V} \right\|^{2}+
 \sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}_d\|
@@ -135,6 +153,7 @@ E =  \sum\left\|\mathcal{L}\mathbf{V}' -  \mathcal{L}\mathbf{V} \right\|^{2}+
 $$
 
 改写为矩阵形式为：
+
 $$
 \left[\begin{array}{c}
 \mathcal{L}\\
@@ -147,8 +166,10 @@ C_2
 \mathbf{d}_e
 \end{array}\right]
 $$
+
 $C$代表标记边相邻顶点的系数矩阵。
 设
+
 $$
 A = \left[\begin{array}{c}
 \mathcal{L}\\
@@ -163,4 +184,4 @@ b=\left[\begin{array}{c}
 $$
 
 A大小为：$(3|V| + 3|M|) \times (3|V|)$，V大小为$3|V|\times 1$，b大小为：$(3|V| + 3|M|) \times 1$。$|M|$为尺寸相关的所有边的个数。
-在分解矩阵$ATA$时，内存爆了，占用高达20G，无法分解计算。
+在分解矩阵$A^TA$时，内存爆了，占用高达20G，无法分解计算。
