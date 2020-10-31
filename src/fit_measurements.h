@@ -3,6 +3,9 @@
 #include <fstream>
 #include <iostream>
 #include <Eigen/Dense>
+#include<Eigen/SparseQR>
+#include<Eigen/SparseLU>
+#include<Eigen/SparseCholesky>	
 
 #include "pmp/SurfaceMesh.h"
 #include "measure.h"

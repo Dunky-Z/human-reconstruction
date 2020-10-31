@@ -8,6 +8,7 @@ using namespace std;
 
 const int M_NUM = 19;
 const double step = 1;
+int num_edge_all = 0;
 Eigen::Matrix3Xd verts;
 Eigen::Matrix3Xi faces;
 
@@ -172,7 +173,7 @@ void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::
 	//18
 	const int num_measure = point_idx.size();
 	//保存每个尺寸的边数量
-	std::vector<int> edge;//size = 17
+	std::vector<int> edge;//size = 18
 	for (auto& num_v : point_idx)
 	{
 		if (num_v.size() > 2)
@@ -185,9 +186,10 @@ void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::
 			//continue;
 		}
 	}
-	cout << edge.size() << endl;
-	//所有边的数量
-	int num_edge_all = std::accumulate(edge.begin(), edge.end(), 0);
+	std::cout << edge.size() << std::endl;
+	//所有边的数量1246
+	num_edge_all = std::accumulate(edge.begin(), edge.end(), 0);
+	std::cout << "num_edge: " << num_edge_all << std::endl;
 	typedef Eigen::Triplet<double> Tri;
 	std::vector<Tri> triplets;
 	triplets.reserve(6 * num_edge_all);
@@ -200,6 +202,7 @@ void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::
 		{
 			int edge_0;
 			int edge_1;
+			//i==0身高信息
 			if (i == 0)
 			{
 				edge_0 = point_idx[i][j];
@@ -214,7 +217,7 @@ void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::
 			const Eigen::Vector3d v1 = vertices.col(edge_1);
 			const Eigen::Vector3d edge_01 = v1 - v0;
 			const double edge_len = edge_01.norm();
-			cout << edge_len << endl;
+			std::cout << edge_len << std::endl;
 			const Eigen::Vector3d auxd = (edge_01 / edge_len) * CalcTargetLen(measurements, edge_len, i + 1, input_m);
 			for (int k = 0; k < 3; ++k)
 			{
@@ -227,6 +230,8 @@ void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::
 		cout << "第 " << i << "轮" << endl;
 		row += edge[i] * 3;
 	}
+	std::cout << "b:" << b.rows() << std::endl;
+
 	A.setFromTriplets(triplets.begin(), triplets.end());
 }
 
@@ -234,8 +239,6 @@ void CaculateCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<std::
 void FitMeasurements(Eigen::Matrix3Xd& res_verts, Eigen::SparseMatrix<double>& C, Eigen::SparseMatrix<double>& L, const Eigen::Matrix3Xd &vertices, Eigen::VectorXd& b2,
 	std::vector<std::vector<int>>& point_idx)
 {
-	const int num_measure = point_idx.size();
-	cout << num_measure << endl;
 	const int num_verts = vertices.cols();
 	Eigen::VectorXd v;
 	v.setConstant(3 * num_verts, 0);
@@ -252,30 +255,41 @@ void FitMeasurements(Eigen::Matrix3Xd& res_verts, Eigen::SparseMatrix<double>& C
 
 	// 根据laplace矩阵计算出所有点的的laplace坐标 3|V|*1
 	auto b1 = L * v;
+	std::cout << "b1 = L*V " << std::endl;
 
-	//拼接b1和b2
-	Eigen::VectorXd b;
-	b.setConstant(3 * num_verts + 3 * num_measure, 0);
+	Eigen::VectorXd b(3*num_verts + 3 * num_edge_all);
 	for (int i = 0; i < 3 * num_verts; ++i)
 		b(i) = b1(i);
-	for (int j = 0; j < 3 * num_measure; ++j)
+	for (int j = 0; j < 3 * num_edge_all; ++j)
 		b(j + 3 * num_verts) = b2(j);
+	std::cout << "fill b" << std::endl;
 
 	//拼接L和C 
-	Eigen::SparseMatrix<double> A(3 * num_verts + 3 * num_measure, 3 * num_verts);
-	for (int i = 0; i < 3 * num_verts; ++i)
-		for (int j = 0; j < 3 * num_verts; ++j)
-			A.coeffRef(i, j) = L.coeff(i, j);
-	for (int i = 3 * num_verts; i < 3 * num_verts + 3 * num_measure; ++i)
-		for (int j = 0; j < 3 * num_verts; ++j)
-			A.coeffRef(i, j) = C.coeff(i - 3 * num_verts, j);
+	typedef Eigen::Triplet<double> Tri;
+	std::vector<Tri> triplets;
+	triplets.reserve(3);
+	Eigen::SparseMatrix<double> A = L;
+	A.conservativeResize(3 * num_verts + 3 * num_edge_all, 3 * num_verts);
 
-	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
+	for (int i = 3 * num_verts; i < 3 * num_verts + 3 * num_edge_all; ++i)
+		for (int j = 0; j < 3 * num_verts; ++j)
+			triplets.push_back(Tri(i, j, C.coeff(i - 3 * num_verts, j)));
+	A.setFromTriplets(triplets.begin(), triplets.end());
+	std::cout << "fill A" << std::endl;
+	std::cout << A.rows() << "*" << A.cols() << std::endl;//41238*37500
+
+	Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
 	//solver.compute(A * AT);
-	solver.compute(A.transpose() * A);
+	auto AT = A.transpose();
+	std::cout << "AT" << std::endl;
+
+	solver.compute(AT * A);
+	std::cout << "ATA" << std::endl;
+
 	if (solver.info() != Eigen::Success)
 		std::cout << "solve failed !" << std::endl;
 	Eigen::VectorXd vecV = solver.solve(A.transpose() * b);
+	std::cout << "solve success !" << std::endl;
 	//Eigen::VectorXd vecV = AT *  solver.solve(b);
 	res_verts = Eigen::Map<Eigen::Matrix3Xd>(vecV.data(), 3, vertices.cols());
 }

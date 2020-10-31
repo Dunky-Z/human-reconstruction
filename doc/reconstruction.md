@@ -102,7 +102,7 @@ E_{\mathcal{P}} = \sum_{e \in \mathcal{P}}\left(\|v_k - v_l \|^{2}-l_{t}(e)^{2}\
 $$
 加入拉普拉斯能量全局保形，
 $$
-E =  \sum\left\|\mathcal{L}\mathbf{V}' -  \mathcal{L}\mathbf{V} \right\|^{2}+
+E =  \sum\left\|L\mathbf{V}' -  L\mathbf{V} \right\|^{2}+
 \sum_{d \in \mathcal{D}}\left(\|v_i - v_j \|^{2}-l_{t}(d)^{2}\right)^{2}
 +
  \sum_{e \in \mathcal{P}}\left(\|v_k - v_l \|^{2}-l_{t}(e)^{2}\right)^{2}
@@ -148,20 +148,19 @@ C_2
 \end{array}\right]
 $$
 $C$代表标记边相邻顶点的系数矩阵。
+设
+$$
+A = \left[\begin{array}{c}
+\mathcal{L}\\
+C_1 \\
+C_2
+\end{array}\right],
+b=\left[\begin{array}{c}
+\Delta\\
+\mathbf{d}_d \\
+\mathbf{d}_e
+\end{array}\right]
+$$
 
-
-左边矩阵大小：$(3|V| + 3|M|) \times (3|V|)$
-V: $3|V|\times 1$
-右边矩阵大学：$(3\times |V| + 3\times |M|) \times 1$
-
-
-
-
-
-
-
-
-
-
-
-
+A大小为：$(3|V| + 3|M|) \times (3|V|)$，V大小为$3|V|\times 1$，b大小为：$(3|V| + 3|M|) \times 1$。$|M|$为尺寸相关的所有边的个数。
+在分解矩阵$ATA$时，内存爆了，占用高达20G，无法分解计算。
