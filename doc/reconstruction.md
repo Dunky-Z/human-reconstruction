@@ -37,6 +37,7 @@ $$F(R)=\int_{x^{2}+y^{2} \leq R^{2}} \frac{1}{2 \pi} \mathrm{e}^{-\frac{x^{2}+y^
 
 $$F(R)=1-\mathrm{e}^{-\frac{R^{2}}{2}}, R \ge 0$$
 
+
 这里$F(R)$可以看成是极坐标中 $r$ 的累积分布函数。由于$F(R)$ 的计算公式比较简单， 逆函数也很容易求得，所以可以利用逆变换法来对r进行采样；对于$\theta$，在$[0,2\pi]$ 上进行均匀采样即可。这样就得到了 $(r,\theta)$ ，经过坐标变换即可得到符合标准正态分布的$(x,y)$。具体采样过程如下：
 1. 产生$[0,1]$上的两个独立均匀分布随机数$\mu_1, \mu_2$
 2. 令
@@ -146,7 +147,7 @@ $$
 同理可以改写测地距离的能量函数，最终能量函数函数为：
 
 $$
-E =  \sum\left\|\mathcal{L}\mathbf{V}' -  \mathcal{L}\mathbf{V} \right\|^{2}+
+E =  \sum\left\|L\mathbf{V}' -  L\mathbf{V} \right\|^{2}+
 \sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}_d\|
 +
 \sum_{e \in \mathcal{P}}\|  (v_{k} - v_{l}) - \mathbf{d}_e\|
@@ -156,7 +157,7 @@ $$
 
 $$
 \left[\begin{array}{c}
-\mathcal{L}\\
+L\\
 C_1 \\
 C_2
 \end{array}\right] V
