@@ -173,7 +173,7 @@ $C$代表标记边相邻顶点的系数矩阵。
 
 $$
 A = \left[\begin{array}{c}
-\mathcal{L}\\
+L\\
 C_1 \\
 C_2
 \end{array}\right],

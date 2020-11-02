@@ -16,6 +16,7 @@ int main()
 	std::vector<std::vector<std::vector<double>>> control_points;
 	Reshaper reshaper;
 	Measure measure;
+	FitMeasure fit;
 	SurfaceMesh mesh;
 	mesh.read((DATASET_PATH + "1_.obj").c_str());
 	reshaper.SaveBinControlPoint(control_points);
@@ -49,9 +50,9 @@ int main()
 	Eigen::SparseMatrix<double> C;
 	Eigen::VectorXd b;
 	Eigen::SparseMatrix<double>  L;
-	CaculateLaplacianCotMatrix(mesh, L);
-	CaculateCoefficientMatrix(C, point_idx, one_verts, one_measure, b, input_m);
-	FitMeasurements(res_verts, C, L, one_verts, b, point_idx);
+	fit.CaculateLaplacianCotMatrix(mesh, L);
+	fit.CaculateCoefficientMatrix(C, point_idx, one_verts, one_measure, b, input_m);
+	fit.FitMeasurements(res_verts, C, L, one_verts, b, point_idx);
 
 	cout << res_verts.leftCols(20) << endl;
 
