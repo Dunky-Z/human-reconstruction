@@ -48,11 +48,13 @@ int main()
 	cout << point_idx.size() << endl;
 
 	Eigen::SparseMatrix<double> C;
+	std::vector<Tri> triplets_A;
 	Eigen::VectorXd b;
 	Eigen::SparseMatrix<double>  L;
-	fit.CaculateLaplacianCotMatrix(mesh, L);
-	fit.CaculateCoefficientMatrix(C, point_idx, one_verts, one_measure, b, input_m);
-	fit.FitMeasurements(res_verts, C, L, one_verts, b, point_idx);
+	std::vector<Tri> triplets_L;
+	fit.CaculateLaplacianCotMatrix(mesh, L,triplets_A);
+	fit.ConstructCoefficientMatrixBottom(C, point_idx, one_verts, one_measure, b, input_m,triplets_A);
+	fit.FitMeasurements(res_verts, C, L, one_verts, b, point_idx, triplets_A);
 
 	cout << res_verts.leftCols(20) << endl;
 
