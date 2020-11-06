@@ -107,7 +107,8 @@ FitMeasure::~FitMeasure() {}
 */
 float FitMeasure::CalcTargetLen(const Eigen::MatrixXd& measurements, const float& cur_len, const int& index, const Eigen::MatrixXd& input_m)
 {
-	float cur_len_p = cur_len / measurements.coeff(index, 0);
+	float m = measurements.coeff(index + 1, 0);
+	float cur_len_p = cur_len / m;
 	float target_len_p = input_m.coeff(index, 0);
 	float target_len = cur_len_p * target_len_p;
 	return target_len;
@@ -244,7 +245,7 @@ void FitMeasure::SetTriplets(
 			const Eigen::Vector3d v0 = vertices.col(edge_0);
 			const Eigen::Vector3d v1 = vertices.col(edge_1);
 			const Eigen::Vector3d edge_01 = v1 - v0;
-			const double edge_len = edge_01.norm();
+			const double edge_len = edge_01.norm() * 1000;
 			//std::cout << edge_len << std::endl;
 			Eigen::Vector3d auxd = (edge_01 / edge_len) * CalcTargetLen(measurements, edge_len, i, input_m);
 			for (int k = 0; k < 3; ++k)
@@ -368,6 +369,7 @@ void FitMeasure::RecoverMeasure(Eigen::MatrixXd& measurelist, Eigen::VectorXd& o
 	binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "mean_measure").c_str(), mean_measure);
 	binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "std_measure").c_str(), std_measure);
 	one_measure = measurelist.col(0);
+	//std::cout << one_measure << std::endl;
 	one_measure = one_measure.cwiseProduct(std_measure);
 	one_measure += mean_measure;
 	//std::cout << one_measure << std::endl;
