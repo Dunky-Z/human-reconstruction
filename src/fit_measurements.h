@@ -42,7 +42,11 @@ public:
 	void ShowMessage(const string& msg);
 	void ConstructCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<Tri>& triplets);
 	void FitMeasure::RecoverMeasure(Eigen::MatrixXd& measurelist, Eigen::VectorXd& one_measure);
-
+	void FitMeasure::CaculateLaplacianCotMatrix_Test(
+		SurfaceMesh& mesh,
+		Eigen::SparseMatrix<double> & L,
+		std::vector<Tri>& triplets,
+		Eigen::SparseMatrix<double>& b);
 protected:
 private:
 	int M_NUM;

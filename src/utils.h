@@ -13,7 +13,7 @@
 #define BASIS_NUM 10
 #define EPSILON 1e-6
 
-const std::string DATASET_PATH = "D:/ITabc/ITabc/objDataSet/dataset/male_tmp/";
+const std::string DATASET_PATH = "../data/";
 //const std::string DATASET_PATH = "D:/ITabc/ITabc/objDataSet/dataset/male/";
 const std::string BIN_DATA_PATH = "../data/";
 //const std::string BIN_DATA_PATH = "./data/train/male/";
