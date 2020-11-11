@@ -391,21 +391,23 @@ void FitMeasure::CaculateLaplacianCotMatrix_Test(
 	const int p_num = mesh.n_vertices();
 	//std::vector<int> fix{ 275,12478,21,2,3,12222,33,444,555,666,777,6663,4443};
 	//std::vector<int> mov{ 4986 }; //position[-0.316209 0.298498 - 0.088143]
-	std::vector<int> fix;
-	std::vector<int> mov{5007};
-	for (auto v : mesh.vertices())
-	{
-		//圆柱体z坐标小于11固定
-		if (mesh.position(v)[2] < -0.8 || mesh.position(v)[2] > 0.6)
-		{
-			fix.push_back(v.idx());
-		}
-		//设置z坐标大于18为移动
-		//if (mesh.position(v)[2] >= 15)
-		//{
-		//	mov.push_back(v.idx());
-		//}
-	}
+	std::vector<int> fix{ 1031 };
+	std::vector<int> mov{ 0 };
+	//vertex# 1031
+	//	position[0.997592 0.049009 0.000000]
+	//for (auto v : mesh.vertices())
+	//{
+	//	//圆柱体z坐标小于11固定
+	//	if (mesh.position(v)[2] < -0.8 || mesh.position(v)[2] > 0.6)
+	//	{
+	//		fix.push_back(v.idx());
+	//	}
+	//	//设置z坐标大于18为移动
+	//	//if (mesh.position(v)[2] >= 15)
+	//	//{
+	//	//	mov.push_back(v.idx());
+	//	//}
+	//}
 	int num_fix = fix.size();
 	int num_mov = mov.size();
 	L.resize(p_num + num_fix + num_mov, p_num);
@@ -420,7 +422,6 @@ void FitMeasure::CaculateLaplacianCotMatrix_Test(
 			p[i] = mesh.position(*vf);
 			id[i] = (*vf).idx();
 		}
-		triplets.reserve(7);
 		for (int i = 0; i < 3; ++i)
 		{
 			int j = (i + 1) % 3, k = (j + 1) % 3;
@@ -480,16 +481,17 @@ void FitMeasure::CaculateLaplacianCotMatrix_Test(
 	//			b.coeffRef(p_num + num_fix + i, j) = v.coeff(mov[i], j);
 	//	}
 	//}
-
+	b.coeffRef(p_num + num_fix, 0) = v.coeff(mov[0], 0) - 0.5;
+	b.coeffRef(p_num + num_fix, 1) = v.coeff(mov[0], 1);
+	b.coeffRef(p_num + num_fix, 2) = v.coeff(mov[0], 2);
 	//std::cout << b << std::endl;
 	//position[-0.316209 0.298498 - 0.088143]
 
-	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
 	auto AT = L.transpose();
 	ShowMessage(string("AT"));
 
 	Eigen::SparseMatrix<double> ATA = AT * L;
-	solver.compute(ATA);
+	Eigen::SimplicialCholesky<Eigen::SparseMatrix<double>> solver(ATA);
 	ShowMessage(string("ATA"));
 
 	if (solver.info() != Eigen::Success)
@@ -497,9 +499,9 @@ void FitMeasure::CaculateLaplacianCotMatrix_Test(
 	//Eigen::Matrix3Xi facets;
 	//binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "facets").c_str(), facets);
 	Eigen::MatrixXd new_vertice(p_num, 3);
-	new_vertice.col(0) = solver.solve(AT*b.col(0));
-	new_vertice.col(1) = solver.solve(AT*b.col(1));
-	new_vertice.col(2) = solver.solve(AT*b.col(2));
+	new_vertice = solver.solve(AT*b);
+	//new_vertice.col(1) = solver.solve(AT*b.col(1));
+	//new_vertice.col(2) = solver.solve(AT*b.col(2));
 	ShowMessage(string(">Solve Success"));
 
 	//meshio::SaveObj((BIN_DATA_PATH + "res.obj").c_str(), res_verts, facets);
