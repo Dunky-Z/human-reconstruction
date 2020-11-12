@@ -20,7 +20,7 @@
 //	FitMeasure fit;
 //	SurfaceMesh mesh;
 //
-//	mesh.read((DATASET_PATH + "sphere.obj").c_str());
+//	mesh.read((DATASET_PATH + "AVE.obj").c_str());
 //	reshaper.SaveBinControlPoint(control_points);
 //	// ‰»Î≥ﬂ¥Á
 //	Eigen::MatrixXd input_m(18, 1);
@@ -51,13 +51,13 @@
 //
 //	std::vector<Tri> triplets_A;
 //	Eigen::SparseMatrix<double> A;
-//	Eigen::SparseMatrix<double> b;
+//	Eigen::VectorXd b;
 //	Eigen::SparseMatrix<double>  L;
-//	fit.CaculateLaplacianCotMatrix_Test(mesh, L, triplets_A, b);
+//	//fit.CaculateLaplacianCotMatrix_Test(mesh, L, triplets_A, b);
 //	fit.CaculateLaplacianCotMatrix(mesh, L, triplets_A);
-//	/*fit.ConstructCoefficientMatrixBottom(point_idx, one_verts, one_measure, b, input_m, triplets_A);
+//	fit.ConstructCoefficientMatrixBottom(point_idx, one_verts, one_measure, b, input_m, triplets_A);
 //	fit.ConstructCoefficientMatrix(A, triplets_A);
-//	fit.FitMeasurements(res_verts, L, one_verts, b, point_idx, A);*/
+//	fit.FitMeasurements(res_verts, L, one_verts, b, point_idx, A);
 //	meshio::SaveObj((BIN_DATA_PATH + "res.obj").c_str(), res_verts, facets);
 //	cout << res_verts.leftCols(20) << endl;
 //

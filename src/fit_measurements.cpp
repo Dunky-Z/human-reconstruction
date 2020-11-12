@@ -125,12 +125,13 @@ void FitMeasure::CaculateLaplacianCotMatrix(const SurfaceMesh& mesh, Eigen::Spar
 {
 	//std::vector<Tri> triplets;
 	const int p_num = mesh.n_vertices();
-	L.resize(3 * p_num, 3 * p_num);
+	L.resize(p_num, p_num);
 	for (auto fit : mesh.faces())
 	{
-		vec3 p[3];
-		int id[3];
 		auto vf = mesh.vertices(fit);
+		Point p[3];
+		double cot[3];
+		int id[3];
 		for (int i = 0; i < 3; ++i, ++vf)
 		{
 			p[i] = mesh.position(*vf);
@@ -153,13 +154,16 @@ void FitMeasure::SetTriplets(
 	{
 		int j = (i + 1) % 3, k = (j + 1) % 3;
 		cot[i] = dot(p[j] - p[i], p[k] - p[i]) / norm(cross(p[j] - p[i], p[k] - p[i]));
-		for (int l = 0; l < 3; ++l)
-		{
-			triplets.emplace_back(Tri(3 * id[j] + l, 3 * id[k] + l, -0.5 * cot[i]));
-			triplets.emplace_back(Tri(3 * id[k] + l, 3 * id[j] + l, -0.5 * cot[i]));
-			triplets.emplace_back(Tri(3 * id[i] + l, 3 * id[i] + l, 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3])));
-		}
+
+		triplets.push_back({ id[j] + k,id[k] + k, -0.5 * cot[i] });
+		triplets.push_back({ id[k] + k,id[j] + k, -0.5 * cot[i] });
+
 	}
+	for (int i = 0; i < 3; ++i)
+	{
+		triplets.push_back({ id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3]) });
+	}
+
 }
 
 /*!
@@ -223,7 +227,7 @@ void FitMeasure::SetTriplets(
 	const Eigen::MatrixXd& measurements)
 {
 	triplets.reserve(7);
-	b.setConstant(3 * num_edge_all, 0);
+	b.setConstant(num_edge_all, 0);
 	int row = 0;
 	for (int i = 0; i < num_measure; ++i)
 	{
@@ -257,7 +261,7 @@ void FitMeasure::SetTriplets(
 				triplets.emplace_back(Tri(_row, _col0, -1));
 				triplets.emplace_back(Tri(_row, _col1, 1));
 				b(row + j * 3 + k) = auxd[k];
-				std::cout << "row: " << row + j * 3 + k << " " << "col: " << edge_0 * 3 + k << " " << auxd[k] << std::endl;
+				//std::cout << "row: " << row + j * 3 + k << " " << "col: " << edge_0 * 3 + k << " " << auxd[k] << std::endl;
 			}
 		}
 		row += edge[i] * 3;
@@ -295,15 +299,15 @@ void FitMeasure::Mat2Vec(
 *@return     void
 */
 void FitMeasure::ConstructB(
+	Eigen::VectorXd& b,
 	Eigen::SparseMatrix<double>& b1,
 	Eigen::VectorXd& b2)
 {
-	Eigen::VectorXd b(3 * num_verts + 3 * num_edge_all);
 	for (int i = 0; i < 3 * num_verts; ++i)
 		b(i) = b1.coeff(i, 0);
 
 	for (int j = 0; j < 3 * num_edge_all; ++j)
-		b(j + 3 * num_verts) = b2(j);
+		b(3 * num_verts + j) = b2(j);
 	ShowMessage(string("FillB"));
 }
 
@@ -332,7 +336,7 @@ void FitMeasure::FitMeasurements(
 	ShowMessage(string("b1 = L * v"));
 
 	Eigen::VectorXd b(3 * num_verts + 3 * num_edge_all);
-	ConstructB(b1, b2);
+	ConstructB(b, b1, b2);
 
 	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
 	auto AT = A.transpose();
@@ -361,7 +365,6 @@ void FitMeasure::ConstructCoefficientMatrix(
 	std::vector<Tri>& triplets)
 {
 	A.resize(3 * num_verts + 3 * num_edge_all, 3 * num_verts);
-
 	A.setFromTriplets(triplets.begin(), triplets.end());
 	ShowMessage(string("Construct A"));
 }
@@ -410,28 +413,36 @@ void FitMeasure::CaculateLaplacianCotMatrix_Test(
 	//}
 	int num_fix = fix.size();
 	int num_mov = mov.size();
-	L.resize(p_num + num_fix + num_mov, p_num);
-	for (auto fit : mesh.faces())
+	auto fit = mesh.faces_begin();
+	triplets.reserve(20);
+	L.resize(p_num, p_num);
+	do
 	{
-		vec3 p[3];
+		auto vf = mesh.vertices(*fit);
+		Point p[3];
+		double cot[3];
 		int id[3];
-		float cot[3];
-		auto vf = mesh.vertices(fit);
 		for (int i = 0; i < 3; ++i, ++vf)
 		{
 			p[i] = mesh.position(*vf);
 			id[i] = (*vf).idx();
 		}
+
 		for (int i = 0; i < 3; ++i)
 		{
 			int j = (i + 1) % 3, k = (j + 1) % 3;
 			cot[i] = dot(p[j] - p[i], p[k] - p[i]) / norm(cross(p[j] - p[i], p[k] - p[i]));
 
-			triplets.emplace_back(Tri(id[j], id[k], -0.5 * cot[i]));
-			triplets.emplace_back(Tri(id[k], id[j], -0.5 * cot[i]));
-			triplets.emplace_back(Tri(id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3])));
+			triplets.push_back({ id[j], id[k], -0.5 * cot[i] });
+			triplets.push_back({ id[k], id[j], -0.5 * cot[i] });
 		}
-	}
+		for (int i = 0; i < 3; ++i)
+		{
+			triplets.push_back({ id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3]) });
+		}
+
+	} while (++fit != mesh.faces_end());
+	L.setFromTriplets(triplets.begin(), triplets.end());
 
 	for (int i = 0; i < num_fix; ++i)
 	{
@@ -456,15 +467,16 @@ void FitMeasure::CaculateLaplacianCotMatrix_Test(
 		i++;
 	}
 	v.setFromTriplets(tri_v.begin(), tri_v.end());
-
-	L.setFromTriplets(triplets.begin(), triplets.end());
+	Eigen::SparseMatrix<double> A;
+	A.resize(p_num + num_fix + num_mov, p_num);
+	A.setFromTriplets(triplets.begin(), triplets.end());
 	b = L * v;
-	//b.conservativeResize(p_num + num_fix + num_mov, 3);
+	b.conservativeResize(p_num + num_fix + num_mov, 3);
 	for (int i = 0; i < num_fix; ++i)
 	{
 		for (int j = 0; j < 3; ++j)
 		{
-			b.coeffRef(p_num + i, j) = v.coeff(fix[i], j);
+			b.insert(p_num + i, j) = v.coeff(fix[i], j);
 		}
 	}
 
@@ -481,16 +493,16 @@ void FitMeasure::CaculateLaplacianCotMatrix_Test(
 	//			b.coeffRef(p_num + num_fix + i, j) = v.coeff(mov[i], j);
 	//	}
 	//}
-	b.coeffRef(p_num + num_fix, 0) = v.coeff(mov[0], 0) - 0.5;
-	b.coeffRef(p_num + num_fix, 1) = v.coeff(mov[0], 1);
-	b.coeffRef(p_num + num_fix, 2) = v.coeff(mov[0], 2);
+	b.insert(p_num + num_fix, 0) = v.coeff(mov[0], 0) - 15;
+	b.insert(p_num + num_fix, 1) = v.coeff(mov[0], 1);
+	b.insert(p_num + num_fix, 2) = v.coeff(mov[0], 2);
 	//std::cout << b << std::endl;
 	//position[-0.316209 0.298498 - 0.088143]
 
-	auto AT = L.transpose();
+	auto AT = A.transpose();
 	ShowMessage(string("AT"));
 
-	Eigen::SparseMatrix<double> ATA = AT * L;
+	Eigen::SparseMatrix<double> ATA = AT * A;
 	Eigen::SimplicialCholesky<Eigen::SparseMatrix<double>> solver(ATA);
 	ShowMessage(string("ATA"));
 

@@ -38,7 +38,7 @@ public:
 	void SetTriplets(std::vector<Tri>& triplets, vec3 p[3], int id[3]);
 	void SetTriplets(std::vector<Tri>& triplets, const Eigen::Matrix3Xd& vertices, Eigen::VectorXd& b, const Eigen::MatrixXd& input_m, const std::vector<std::vector<int>>& point_idx, const Eigen::MatrixXd& measurements);
 	void Mat2Vec(Eigen::SparseVector<double>& v, const Eigen::Matrix3Xd& vertices);
-	void ConstructB(Eigen::SparseMatrix<double>& b1, Eigen::VectorXd& b2);
+	void ConstructB(Eigen::VectorXd& b, Eigen::SparseMatrix<double>& b1, Eigen::VectorXd& b2);
 	void ShowMessage(const string& msg);
 	void ConstructCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<Tri>& triplets);
 	void FitMeasure::RecoverMeasure(Eigen::MatrixXd& measurelist, Eigen::VectorXd& one_measure);

@@ -12,17 +12,10 @@ LaplaceDeformation::LaplaceDeformation()
 //初始化：设置固定锚点和移动锚点已经移动锚点移动后的坐标
 void LaplaceDeformation::InitializeMesh()
 {
-	fix_anchor_idx.clear();
-	move_anchor_idx.clear();
-
-	fix_anchor_idx.push_back(1031);
-
 	move_anchor_coord.resize(1);
-	move_anchor_idx.push_back(0);
-
-	move_anchor_coord[0][0] = -20;
-	move_anchor_coord[0][1] = 0; 
-	move_anchor_coord[0][2] = 0;
+	move_anchor_coord[0][0] = -0.245001;
+	move_anchor_coord[0][1] = 0.8;
+	move_anchor_coord[0][2] = -0.062755;
 }
 
 //主函数
@@ -30,19 +23,18 @@ void LaplaceDeformation::AllpyLaplaceDeformation()
 {
 	//获取数据
 	SurfaceMesh mesh;
-	mesh.read((DATASET_PATH + "sphere.obj").c_str());
+	mesh.read((DATASET_PATH + "AVE.obj").c_str());
 	cout << "获取数据完成" << endl;
 
 	if (mesh.n_vertices() == 0)
 		return;
 	InitializeMesh();
 	cout << "初始化完成" << endl;
-
-	Compute_CotMatrix(mesh);
+	std::vector<T> triplets;
+	Compute_CotMatrix(mesh, triplets);
 	cout << "余切矩阵计算完成！" << endl;
 
-
-	BuildATtimesAMatrix(mesh);
+	BuildATtimesAMatrix(mesh, triplets);
 	cout << "ATA" << endl;
 
 	BuildATtimesbMatrix(mesh);
@@ -60,12 +52,11 @@ void LaplaceDeformation::AllpyLaplaceDeformation()
 }
 
 
-void LaplaceDeformation::Compute_CotMatrix(const SurfaceMesh& mesh)
+void LaplaceDeformation::Compute_CotMatrix(const SurfaceMesh& mesh, std::vector<T>& triplets)
 {
 	auto pts = mesh.get_vertex_property<Point>("v:point");
 	auto fit = mesh.faces_begin();
-	std::vector<T> tripletlist;
-	tripletlist.reserve(20);
+	triplets.reserve(20);
 	const int p_num = mesh.n_vertices();
 	L.resize(p_num, p_num);
 
@@ -86,49 +77,33 @@ void LaplaceDeformation::Compute_CotMatrix(const SurfaceMesh& mesh)
 			int j = (i + 1) % 3, k = (j + 1) % 3;
 			cot[i] = dot(p[j] - p[i], p[k] - p[i]) / norm(cross(p[j] - p[i], p[k] - p[i]));
 
-			tripletlist.push_back({ id[j], id[k], -0.5 * cot[i] });
-			tripletlist.push_back({ id[k], id[j], -0.5 * cot[i] });
+			triplets.push_back({ id[j], id[k], -0.5 * cot[i] });
+			triplets.push_back({ id[k], id[j], -0.5 * cot[i] });
 		}
 		for (int i = 0; i < 3; ++i)
 		{
-			tripletlist.push_back({ id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3]) });
+			triplets.push_back({ id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3]) });
 		}
 
 	} while (++fit != mesh.faces_end());
-	L.setFromTriplets(tripletlist.begin(), tripletlist.end());
+	L.setFromTriplets(triplets.begin(), triplets.end());
 
 }
 
-void LaplaceDeformation::BuildATtimesAMatrix(const SurfaceMesh & mesh)
+void LaplaceDeformation::BuildATtimesAMatrix(const SurfaceMesh & mesh, std::vector<T>& triplets)
 {
 	int n_fix_anchors = fix_anchor_idx.size(), n_move_anchors = move_anchor_idx.size(), points_num = mesh.vertices_size();
-	A = L;
-	A.conservativeResize(points_num + n_fix_anchors + n_move_anchors, points_num);
-
-	for (auto i = 0; i < n_fix_anchors; i++)
+	for (int i = 0; i < n_fix_anchors; ++i)
 	{
-		for (auto j = 0; j < points_num; j++)
-		{
-			if (j == fix_anchor_idx[i])
-				A.coeffRef(points_num + i, j) = 1;
-			else
-				A.coeffRef(points_num + i, j) = 0;
-			//cout << j << endl;
-		}
+		triplets.emplace_back(T(points_num + i, fix_anchor_idx[i], 1));
 	}
 
-	// 移动锚点
-	for (auto i = 0; i < move_anchor_idx.size(); i++)
+	for (int i = 0; i < n_move_anchors; ++i)
 	{
-		for (auto j = 0; j < points_num; j++)
-		{
-			if (j == move_anchor_idx[i])
-				A.coeffRef(points_num + n_fix_anchors + i, j) = 1;
-			else
-				A.coeffRef(points_num + n_fix_anchors + i, j) = 0;
-			//cout << j << endl;
-		}
+		triplets.emplace_back(T(points_num + n_fix_anchors + i, move_anchor_idx[i], 1));
 	}
+	A.resize(points_num + n_fix_anchors + n_move_anchors, points_num);
+	A.setFromTriplets(triplets.begin(), triplets.end());
 	//printf("Laplace 矩阵计算完成\n");
 	//cout << A << endl;
 	AT = A.transpose();
@@ -180,7 +155,7 @@ void LaplaceDeformation::BuildATtimesbMatrix(const SurfaceMesh & mesh)
 	// 计算三个轴上的 ATb 向量
 	ATb = AT * b;
 }
- 
+
 //更新坐标
 void LaplaceDeformation::SetNewcord(SurfaceMesh & mesh)
 {
