@@ -105,7 +105,11 @@ FitMeasure::~FitMeasure() {}
 *@param[in]  int index  第index个尺寸
 *@return     float
 */
-float FitMeasure::CalcTargetLen(const Eigen::MatrixXd& measurements, const float& cur_len, const int& index, const Eigen::MatrixXd& input_m)
+float FitMeasure::CalcTargetLen(
+	const Eigen::MatrixXd& measurements, 
+	const float& cur_len, 
+	const int& index, 
+	const Eigen::MatrixXd& input_m)
 {
 	float m = measurements.coeff(index + 1, 0) / 1000.0;
 	float cur_len_p = cur_len / m;
@@ -121,7 +125,9 @@ float FitMeasure::CalcTargetLen(const Eigen::MatrixXd& measurements, const float
 *@param[in]  Eigen::SparseMatrix<float> & L  拉普拉斯矩阵，是个大型稀疏矩阵
 *@return     void
 */
-void FitMeasure::CaculateLaplacianCotMatrix(const SurfaceMesh& mesh, Eigen::SparseMatrix<double> & L, std::vector<Tri>& triplets)
+void FitMeasure::CaculateLaplacianCotMatrix(
+	const SurfaceMesh& mesh, 
+	Eigen::SparseMatrix<double> & L)
 {
 	//std::vector<Tri> triplets;
 	const int p_num = mesh.n_vertices();
@@ -136,31 +142,29 @@ void FitMeasure::CaculateLaplacianCotMatrix(const SurfaceMesh& mesh, Eigen::Spar
 			p[i] = mesh.position(*vf);
 			id[i] = (*vf).idx();
 		}
-		SetTriplets(triplets, p, id);
+		SetTriplets(p, id);
 	} while (++fit != mesh.faces_end());
-	L.setFromTriplets(triplets.begin(), triplets.end());
+	L.setFromTriplets(triplets_A.begin(), triplets_A.end());
 	std::cout << "Calc Laplacian Done !" << std::endl;
 }
 
 void FitMeasure::SetTriplets(
-	std::vector<Tri>& triplets,
 	vec3 p[3],
 	int id[3])
 {
-	triplets.reserve(7);
+	triplets_A.reserve(7);
 	float cot[3];
 	for (int i = 0; i < 3; ++i)
 	{
 		int j = (i + 1) % 3, k = (j + 1) % 3;
 		cot[i] = dot(p[j] - p[i], p[k] - p[i]) / norm(cross(p[j] - p[i], p[k] - p[i]));
-
-		triplets.push_back({ id[j],id[k], -0.5 * cot[i] });
-		triplets.push_back({ id[k],id[j], -0.5 * cot[i] });
+		triplets_A.push_back({ id[j],id[k], -0.5 * cot[i] });
+		triplets_A.push_back({ id[k],id[j], -0.5 * cot[i] });
 
 	}
 	for (int i = 0; i < 3; ++i)
 	{
-		triplets.push_back({ id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3]) });
+		triplets_A.push_back({ id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3]) });
 	}
 
 }
@@ -207,8 +211,7 @@ void FitMeasure::ConstructCoefficientMatrixBottom(
 	const Eigen::Matrix3Xd &vertices,
 	const Eigen::MatrixXd& measurements,
 	Eigen::SparseMatrix<double>& b,
-	const Eigen::MatrixXd& input_m,
-	std::vector<Tri>& triplets)
+	const Eigen::MatrixXd& input_m)
 {
 	//std::vector<Tri> triplets;
 	num_verts = vertices.cols();
@@ -216,18 +219,17 @@ void FitMeasure::ConstructCoefficientMatrixBottom(
 	SaveEdge(point_idx);
 	num_edge_all = std::accumulate(edge.begin(), edge.end(), 0);	//所有边的数量1246
 	b.resize(num_edge_all, 3);
-	SetTriplets(triplets, vertices, b, input_m, point_idx, measurements);
+	SetTriplets(vertices, b, input_m, point_idx, measurements);
 }
 
 void FitMeasure::SetTriplets(
-	std::vector<Tri>& triplets,
 	const Eigen::Matrix3Xd& vertices,
 	Eigen::SparseMatrix<double>& b,
 	const Eigen::MatrixXd& input_m,
 	const std::vector<std::vector<int>>& point_idx,
 	const Eigen::MatrixXd& measurements)
 {
-	triplets.reserve(7);
+	triplets_A.reserve(7);
 	int row = 0;
 	for (int i = 0; i < num_measure; ++i)
 	{
@@ -258,8 +260,8 @@ void FitMeasure::SetTriplets(
 			int _row = num_verts + row + j;
 			int _col0 = edge_0;
 			int _col1 = edge_1;
-			triplets.emplace_back(Tri(_row, _col0, -1));
-			triplets.emplace_back(Tri(_row, _col1, 1));
+			triplets_A.emplace_back(Tri(_row, _col0, -1));
+			triplets_A.emplace_back(Tri(_row, _col1, 1));
 			for (int k = 0; k < 3; ++k)
 			{
 				b.insert(row + j, k) = auxd[k];
@@ -377,11 +379,10 @@ void FitMeasure::ShowMessage(const string& msg)
 }
 
 void FitMeasure::ConstructCoefficientMatrix(
-	Eigen::SparseMatrix<double>& A,
-	std::vector<Tri>& triplets)
+	Eigen::SparseMatrix<double>& A)
 {
 	A.resize(num_verts + num_edge_all, num_verts);
-	A.setFromTriplets(triplets.begin(), triplets.end());
+	A.setFromTriplets(triplets_A.begin(), triplets_A.end());
 	ShowMessage(string("Construct A"));
 }
 
@@ -398,7 +399,6 @@ void FitMeasure::RecoverMeasure(Eigen::MatrixXd& measurelist, Eigen::VectorXd& o
 	one_measure += mean_measure;
 	//std::cout << one_measure << std::endl;
 }
-
 
 void FitMeasure::CaculateLaplacianCotMatrix_Test(
 	SurfaceMesh& mesh,

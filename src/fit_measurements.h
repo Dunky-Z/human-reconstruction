@@ -29,21 +29,36 @@ public:
 	void CalcGeodesicGradient(Eigen::VectorXd& gradient, Matrix3Xd& vertices, Eigen::MatrixXd& measurements, Eigen::MatrixXd& input_m);
 	float CalcTargetLen(const Eigen::MatrixXd& measurements, const float& cur_len, const int& index, const Eigen::MatrixXd& input_m);
 	void CalcEnergy(double& energy, Eigen::Matrix3Xd& vertices);
-	void CaculateLaplacianCotMatrix(const SurfaceMesh& mesh, Eigen::SparseMatrix<double> & L, std::vector<Tri>& triplets_L);
-	void ConstructCoefficientMatrixBottom(std::vector<std::vector<int>>& point_idx, const Eigen::Matrix3Xd &vertices, const Eigen::MatrixXd& measurements,
-		Eigen::SparseMatrix<double>& b, const Eigen::MatrixXd& input_m, std::vector<Tri>& triplets);
+	void CaculateLaplacianCotMatrix(
+		const SurfaceMesh& mesh, 
+		Eigen::SparseMatrix<double> & L);
+	void ConstructCoefficientMatrixBottom(
+		std::vector<std::vector<int>>& point_idx, 
+		const Eigen::Matrix3Xd &vertices,
+		const Eigen::MatrixXd& measurements,
+		Eigen::SparseMatrix<double>& b, 
+		const Eigen::MatrixXd& input_m);
 	void FitMeasurements(
 		SurfaceMesh& mesh,
 		Eigen::Matrix3Xd& res_verts, const Eigen::SparseMatrix<double>& L,
 		const Eigen::Matrix3Xd& vertices, Eigen::SparseMatrix<double>& b2,
 		std::vector<std::vector<int>>& point_idx, Eigen::SparseMatrix<double> A);
 	void SaveEdge(std::vector<std::vector<int>>& point_idx);
-	void SetTriplets(std::vector<Tri>& triplets, vec3 p[3], int id[3]);
-	void SetTriplets(std::vector<Tri>& triplets, const Eigen::Matrix3Xd& vertices, Eigen::SparseMatrix<double>& b, const Eigen::MatrixXd& input_m, const std::vector<std::vector<int>>& point_idx, const Eigen::MatrixXd& measurements);
-	void Mat2Vec(Eigen::SparseMatrix<double>& v, const Eigen::Matrix3Xd& vertices);
+	void SetTriplets(
+		vec3 p[3], 
+		int id[3]);
+	void SetTriplets(
+		const Eigen::Matrix3Xd& vertices, 
+		Eigen::SparseMatrix<double>& b, 
+		const Eigen::MatrixXd& input_m, 
+		const std::vector<std::vector<int>>& point_idx, 
+		const Eigen::MatrixXd& measurements);
+	void Mat2Vec(Eigen::SparseMatrix<double>& v, 
+		const Eigen::Matrix3Xd& vertices);
 	void ConstructB(Eigen::SparseMatrix<double>& b, Eigen::SparseMatrix<double>& b1, Eigen::SparseMatrix<double>& b2);
 	void ShowMessage(const string& msg);
-	void ConstructCoefficientMatrix(Eigen::SparseMatrix<double>& A, std::vector<Tri>& triplets);
+	void ConstructCoefficientMatrix(
+		Eigen::SparseMatrix<double>& A);
 	void FitMeasure::RecoverMeasure(Eigen::MatrixXd& measurelist, Eigen::VectorXd& one_measure);
 	void FitMeasure::CaculateLaplacianCotMatrix_Test(
 		SurfaceMesh& mesh,
@@ -82,5 +97,6 @@ private:
 	//std::vector<std::vector<int>> point_idx;//[m][n]m个尺寸，每个尺寸n个点，每个点对应的顶点下标
 	std::vector<std::vector<std::vector<double>>> control_points;
 	std::vector<Point> Vertice;
+	std::vector<Tri> triplets_A;
 
 };

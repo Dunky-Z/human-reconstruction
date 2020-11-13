@@ -20,11 +20,11 @@ int main()
 	FitMeasure fit;
 	SurfaceMesh mesh;
 
-	mesh.read((DATASET_PATH + "AVE.obj").c_str());
+	mesh.read((DATASET_PATH + "1_.obj").c_str());
 	reshaper.SaveBinControlPoint(control_points);
 	//输入尺寸
 	Eigen::MatrixXd input_m(18, 1);
-	input_m << 1795.61, 460.47, 1212.81, 1098.78, 1134.35, 890.41, 823.41, 419.05, 824.58, 1126.35, 1199.55, 1336.46, 649.92, 623.889, 204.25, 1313.27, 442.89, 726.47;
+	input_m << 1695.61, 460.47, 1312.81, 1098.78, 1134.35, 890.41, 823.41, 419.05, 824.58, 1126.35, 1299.55, 1336.46, 649.92, 623.889, 204.25, 1313.27, 442.89, 726.47;
 
 	//保存模型顶点，面片信息
 	//reshaper.SaveVertFacetInBin();
@@ -49,15 +49,15 @@ int main()
 	std::vector<std::vector<int>> point_idx;
 	reshaper.SaveBinEdge(control_points, point_idx);
 
-	std::vector<Tri> triplets_A;
+	
 	Eigen::SparseMatrix<double> A;
 	Eigen::SparseMatrix<double> b;
 	Eigen::SparseMatrix<double> L;
 	//fit.CaculateLaplacianCotMatrix_Test(mesh, L, triplets_A, b);
-	fit.CaculateLaplacianCotMatrix(mesh, L, triplets_A);
-	fit.ConstructCoefficientMatrixBottom(point_idx, one_verts, one_measure, b, input_m, triplets_A);
+	fit.CaculateLaplacianCotMatrix(mesh, L);
+	fit.ConstructCoefficientMatrixBottom(point_idx, one_verts, one_measure, b, input_m);
 	//fit.ConstructCoefficientMatrixBottom_Test(mesh,point_idx, one_verts, b, input_m, triplets_A);
-	fit.ConstructCoefficientMatrix(A, triplets_A);
+	fit.ConstructCoefficientMatrix(A);
 	fit.FitMeasurements(mesh,res_verts, L, one_verts, b, point_idx, A);
 	meshio::SaveObj((BIN_DATA_PATH + "res.obj").c_str(), res_verts, facets);
 	cout << res_verts.leftCols(20) << endl;
