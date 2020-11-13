@@ -209,7 +209,6 @@ void FitMeasure::ConstructCoefficientMatrixBottom(
 	std::vector<std::vector<int>>& point_idx,
 	const Eigen::Matrix3Xd &vertices,
 	const Eigen::MatrixXd& measurements,
-	Eigen::SparseMatrix<double>& b,
 	const Eigen::MatrixXd& input_m)
 {
 	//std::vector<Tri> triplets;
@@ -217,13 +216,12 @@ void FitMeasure::ConstructCoefficientMatrixBottom(
 	num_measure = point_idx.size();	//18
 	SaveEdge(point_idx);
 	num_edge_all = std::accumulate(edge.begin(), edge.end(), 0);	//所有边的数量1246
-	b.resize(num_edge_all, 3);
-	SetTriplets(vertices, b, input_m, point_idx, measurements);
+	b_down.resize(num_edge_all, 3);
+	SetTriplets(vertices, input_m, point_idx, measurements);
 }
 
 void FitMeasure::SetTriplets(
 	const Eigen::Matrix3Xd& vertices,
-	Eigen::SparseMatrix<double>& b,
 	const Eigen::MatrixXd& input_m,
 	const std::vector<std::vector<int>>& point_idx,
 	const Eigen::MatrixXd& measurements)
@@ -263,7 +261,7 @@ void FitMeasure::SetTriplets(
 			triplets_A.emplace_back(Tri(_row, _col1, 1));
 			for (int k = 0; k < 3; ++k)
 			{
-				b.insert(row + j, k) = auxd[k];
+				b_down.insert(row + j, k) = auxd[k];
 			}
 			//std::cout << "row: " << row + j * 3 + k << " " << "col: " << edge_0 * 3 + k << " " << auxd[k] << std::endl;
 		}
@@ -300,10 +298,10 @@ void FitMeasure::Mat2Vec(
 *@return     void
 */
 void FitMeasure::ConstructB(
-	Eigen::SparseMatrix<double>& b,
 	Eigen::SparseMatrix<double>& b1,
 	Eigen::SparseMatrix<double>& b2)
 {
+	b.resize(num_verts + num_edge_all, 3);
 	for (int i = 0; i < num_verts; ++i)
 		for (int j = 0; j < 3; ++j)
 		{
@@ -334,18 +332,14 @@ void FitMeasure::FitMeasurements(
 	SurfaceMesh& mesh,
 	Eigen::Matrix3Xd& res_verts,
 	const Eigen::Matrix3Xd& vertices,
-	Eigen::SparseMatrix<double> & b2,
-	std::vector<std::vector<int>>& point_idx,
-	Eigen::SparseMatrix<double> A)
+	std::vector<std::vector<int>>& point_idx)
 {
 	Eigen::SparseMatrix<double> v(num_verts, 3);
 	Mat2Vec(v, vertices);
 
 	Eigen::SparseMatrix<double> b1 = L * v;
 	ShowMessage(string("b1 = L * v"));
-
-	Eigen::SparseMatrix<double> b(num_verts + num_edge_all, 3);
-	ConstructB(b, b1, b2);
+	ConstructB(b1, b_down);
 
 	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
 	auto AT = A.transpose();
@@ -376,8 +370,7 @@ void FitMeasure::ShowMessage(const string& msg)
 	std::cout << msg.c_str() << std::endl;
 }
 
-void FitMeasure::ConstructCoefficientMatrix(
-	Eigen::SparseMatrix<double>& A)
+void FitMeasure::ConstructCoefficientMatrix()
 {
 	A.resize(num_verts + num_edge_all, num_verts);
 	A.setFromTriplets(triplets_A.begin(), triplets_A.end());
@@ -620,7 +613,7 @@ void FitMeasure::FitMeasurements_Test(
 	ShowMessage(string("b1 = L * v"));
 
 	Eigen::SparseMatrix<double> b(num_verts + num_edge_all, 3);
-	ConstructB(b, b1, b2);
+	//ConstructB(b, b1, b2);
 
 	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
 	auto AT = A.transpose();

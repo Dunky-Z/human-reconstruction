@@ -49,15 +49,12 @@ int main()
 	std::vector<std::vector<int>> point_idx;
 	reshaper.SaveBinEdge(control_points, point_idx);
 
-	
-	Eigen::SparseMatrix<double> A;
-	Eigen::SparseMatrix<double> b;
 	//fit.CaculateLaplacianCotMatrix_Test(mesh, L, triplets_A, b);
 	fit.CaculateLaplacianCotMatrix(mesh);
-	fit.ConstructCoefficientMatrixBottom(point_idx, one_verts, one_measure, b, input_m);
+	fit.ConstructCoefficientMatrixBottom(point_idx, one_verts, one_measure, input_m);
 	//fit.ConstructCoefficientMatrixBottom_Test(mesh,point_idx, one_verts, b, input_m, triplets_A);
-	fit.ConstructCoefficientMatrix(A);
-	fit.FitMeasurements(mesh,res_verts, one_verts, b, point_idx, A);
+	fit.ConstructCoefficientMatrix();
+	fit.FitMeasurements(mesh,res_verts, one_verts, point_idx);
 	meshio::SaveObj((BIN_DATA_PATH + "res.obj").c_str(), res_verts, facets);
 	cout << res_verts.leftCols(20) << endl;
 
