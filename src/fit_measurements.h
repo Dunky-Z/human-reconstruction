@@ -30,8 +30,7 @@ public:
 	float CalcTargetLen(const Eigen::MatrixXd& measurements, const float& cur_len, const int& index, const Eigen::MatrixXd& input_m);
 	void CalcEnergy(double& energy, Eigen::Matrix3Xd& vertices);
 	void CaculateLaplacianCotMatrix(
-		const SurfaceMesh& mesh, 
-		Eigen::SparseMatrix<double> & L);
+		const SurfaceMesh& mesh);
 	void ConstructCoefficientMatrixBottom(
 		std::vector<std::vector<int>>& point_idx, 
 		const Eigen::Matrix3Xd &vertices,
@@ -40,9 +39,11 @@ public:
 		const Eigen::MatrixXd& input_m);
 	void FitMeasurements(
 		SurfaceMesh& mesh,
-		Eigen::Matrix3Xd& res_verts, const Eigen::SparseMatrix<double>& L,
-		const Eigen::Matrix3Xd& vertices, Eigen::SparseMatrix<double>& b2,
-		std::vector<std::vector<int>>& point_idx, Eigen::SparseMatrix<double> A);
+		Eigen::Matrix3Xd& res_verts,
+		const Eigen::Matrix3Xd& vertices, 
+		Eigen::SparseMatrix<double>& b2,
+		std::vector<std::vector<int>>& point_idx, 
+		Eigen::SparseMatrix<double> A);
 	void SaveEdge(std::vector<std::vector<int>>& point_idx);
 	void SetTriplets(
 		vec3 p[3], 
@@ -98,5 +99,6 @@ private:
 	std::vector<std::vector<std::vector<double>>> control_points;
 	std::vector<Point> Vertice;
 	std::vector<Tri> triplets_A;
+	Eigen::SparseMatrix<double> L;
 
 };

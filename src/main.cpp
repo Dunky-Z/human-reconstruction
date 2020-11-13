@@ -52,13 +52,12 @@ int main()
 	
 	Eigen::SparseMatrix<double> A;
 	Eigen::SparseMatrix<double> b;
-	Eigen::SparseMatrix<double> L;
 	//fit.CaculateLaplacianCotMatrix_Test(mesh, L, triplets_A, b);
-	fit.CaculateLaplacianCotMatrix(mesh, L);
+	fit.CaculateLaplacianCotMatrix(mesh);
 	fit.ConstructCoefficientMatrixBottom(point_idx, one_verts, one_measure, b, input_m);
 	//fit.ConstructCoefficientMatrixBottom_Test(mesh,point_idx, one_verts, b, input_m, triplets_A);
 	fit.ConstructCoefficientMatrix(A);
-	fit.FitMeasurements(mesh,res_verts, L, one_verts, b, point_idx, A);
+	fit.FitMeasurements(mesh,res_verts, one_verts, b, point_idx, A);
 	meshio::SaveObj((BIN_DATA_PATH + "res.obj").c_str(), res_verts, facets);
 	cout << res_verts.leftCols(20) << endl;
 

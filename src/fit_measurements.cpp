@@ -126,8 +126,7 @@ float FitMeasure::CalcTargetLen(
 *@return     void
 */
 void FitMeasure::CaculateLaplacianCotMatrix(
-	const SurfaceMesh& mesh, 
-	Eigen::SparseMatrix<double> & L)
+	const SurfaceMesh& mesh)
 {
 	//std::vector<Tri> triplets;
 	const int p_num = mesh.n_vertices();
@@ -334,7 +333,6 @@ void FitMeasure::ConstructB(
 void FitMeasure::FitMeasurements(
 	SurfaceMesh& mesh,
 	Eigen::Matrix3Xd& res_verts,
-	const Eigen::SparseMatrix<double>& L,
 	const Eigen::Matrix3Xd& vertices,
 	Eigen::SparseMatrix<double> & b2,
 	std::vector<std::vector<int>>& point_idx,
