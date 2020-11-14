@@ -18,7 +18,9 @@ Measure::~Measure() { }
 *@param[in]  const Eigen::Matrix3Xd & vertices  一个模型的所有顶点信息
 *@param[in]  const Eigen::Matrix3Xi & facets  三角面片的信息
 *@return     Eigen::MatrixXd
-*/Eigen::MatrixXd Measure::CalcMeasure(const std::vector<std::vector<std::vector<double>>>& control_points, const Eigen::Matrix3Xd & vertices,
+*/Eigen::MatrixXd Measure::CalcMeasure(
+	const std::vector<std::vector<std::vector<double>>>& control_points, 
+	const Eigen::Matrix3Xd & vertices,
 	const Eigen::Matrix3Xi &facets)
 {
 

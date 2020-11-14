@@ -15,10 +15,11 @@ int main()
 	clock_t t = clock();
 
 	std::vector<std::vector<std::vector<double>>> control_points;
-	Reshaper reshaper;
-	Measure measure;
-	FitMeasure fit;
+
+	FitMeasure	fit;
 	SurfaceMesh mesh;
+	Measure		measure;
+	Reshaper	reshaper;
 
 	mesh.read((DATASET_PATH + "1_.obj").c_str());
 	reshaper.SaveBinControlPoint(control_points);
@@ -39,24 +40,19 @@ int main()
 	Eigen::MatrixXd measurelist;
 	//measure.ConvertMeasure(verts, facets, control_points, measurelist);
 
-	Eigen::VectorXd one_measure;//取出一个模型的尺寸信息
-	fit.RecoverMeasure(measurelist, one_measure);
-
 	Eigen::Matrix3Xd res_verts;
 	Eigen::MatrixXd one_verts = verts.col(0);//取出一个模型的顶点信息
 	one_verts.resize(3, verts.rows() / 3);
-	//保存边信息
+
+	Eigen::MatrixXd one_measure;
+	one_measure.resize(19, 1);
+	one_measure = measure.CalcMeasure(control_points, one_verts, facets);
+	std::cout << one_measure << std::endl;
+
 	std::vector<std::vector<int>> point_idx;
 	reshaper.SaveBinEdge(control_points, point_idx);
 
-	//fit.CaculateLaplacianCotMatrix_Test(mesh, L, triplets_A, b);
-	fit.CaculateLaplacianCotMatrix(mesh);
-	fit.ConstructCoefficientMatrixBottom(point_idx, one_verts, one_measure, input_m);
-	//fit.ConstructCoefficientMatrixBottom_Test(mesh,point_idx, one_verts, b, input_m, triplets_A);
-	fit.ConstructCoefficientMatrix();
-	fit.FitMeasurements(mesh,res_verts, one_verts, point_idx);
-	meshio::SaveObj((BIN_DATA_PATH + "res.obj").c_str(), res_verts, facets);
-	cout << res_verts.leftCols(20) << endl;
+	fit.FitMeasurements(mesh, res_verts, one_verts, one_measure, point_idx, input_m);
 
 	cout << "Main spend : " << (double)(clock() - t) / CLOCKS_PER_SEC << "seconds!" << endl;
 	getchar();

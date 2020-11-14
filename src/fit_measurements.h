@@ -32,32 +32,39 @@ public:
 	void CaculateLaplacianCotMatrix(
 		const SurfaceMesh& mesh);
 	void ConstructCoefficientMatrixBottom(
-		std::vector<std::vector<int>>& point_idx, 
-		const Eigen::Matrix3Xd &vertices,
+		std::vector<std::vector<int>>& point_idx,
+		const Eigen::Matrix3Xd& vertices,
 		const Eigen::MatrixXd& measurements,
 		const Eigen::MatrixXd& input_m);
 	void FitMeasurements(
 		SurfaceMesh& mesh,
 		Eigen::Matrix3Xd& res_verts,
-		const Eigen::Matrix3Xd& vertices, 
-		std::vector<std::vector<int>>& point_idx);
+		const Eigen::Matrix3Xd& vertices,
+		const Eigen::MatrixXd& measurements,
+		std::vector<std::vector<int>>& point_idx,
+		const Eigen::MatrixXd& input_m);
 	void SaveEdge(std::vector<std::vector<int>>& point_idx);
 	void SetTriplets(
-		vec3 p[3], 
+		vec3 p[3],
 		int id[3]);
 	void SetTriplets(
-		const Eigen::Matrix3Xd& vertices, 
-		const Eigen::MatrixXd& input_m, 
-		const std::vector<std::vector<int>>& point_idx, 
+		const Eigen::Matrix3Xd& vertices,
+		const Eigen::MatrixXd& input_m,
+		const std::vector<std::vector<int>>& point_idx,
 		const Eigen::MatrixXd& measurements);
 	void Mat2Vec(Eigen::SparseMatrix<double>& v,
 		const Eigen::Matrix3Xd& vertices);
 	void ConstructB(
-		Eigen::SparseMatrix<double>& b1, 
+		Eigen::SparseMatrix<double>& b1,
 		Eigen::SparseMatrix<double>& b2);
 	void ShowMessage(const string& msg);
 	void ConstructCoefficientMatrix();
-	void FitMeasure::RecoverMeasure(Eigen::MatrixXd& measurelist, Eigen::VectorXd& one_measure);
+	void FitMeasure::RecoverMeasure(
+		Eigen::MatrixXd& measurelist, 
+		Eigen::MatrixXd& one_measure);
+	void FitMeasure::SaveObj(
+		SurfaceMesh& mesh,
+		Eigen::SparseMatrix<double>& new_vertice);
 	void FitMeasure::CaculateLaplacianCotMatrix_Test(
 		SurfaceMesh& mesh,
 		Eigen::SparseMatrix<double> & L,
@@ -88,17 +95,17 @@ private:
 	int num_measure;
 	int num_edge_all;
 	int num_verts;
+	std::vector<Tri> triplets_A;
 	std::vector<int> edge;//size = 18
+	std::vector<Point> Vertice;
 	Eigen::Matrix3Xd verts;
 	Eigen::Matrix3Xi faces;
 	Eigen::VectorXd gradient;
+	Eigen::SparseMatrix<double> A;
+	Eigen::SparseMatrix<double> L;
+	Eigen::SparseMatrix<double> b_down;
+	Eigen::SparseMatrix<double> b;
 	//std::vector<std::vector<int>> point_idx;//[m][n]m个尺寸，每个尺寸n个点，每个点对应的顶点下标
 	std::vector<std::vector<std::vector<double>>> control_points;
-	std::vector<Point> Vertice;
-	Eigen::SparseMatrix<double> A;
-	std::vector<Tri> triplets_A;
-	Eigen::SparseMatrix<double> L;
-	Eigen::SparseMatrix<double>& b_down;
-	Eigen::SparseMatrix<double> b;
 
 };
