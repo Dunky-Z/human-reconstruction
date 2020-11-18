@@ -1,21 +1,30 @@
 #pragma once
 #include <time.h>
 #include <string>
+#include <math.h>
 #include <fstream>
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <Eigen/Dense>
-#include<Eigen/SparseQR>
-#include<Eigen/SparseLU>
-#include<Eigen/SparseCholesky>	
+#include <Eigen/SparseQR>
+#include <Eigen/SparseLU>
+#include <Eigen/SparseCholesky>	
 
-#include "pmp/SurfaceMesh.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "../alglib/cpp/src/optimization.h"
+
+#include "utils.h"
 #include "measure.h"
 #include "reshaper.h"
-#include "utils.h"
+#include "pmp/SurfaceMesh.h"
 
-using namespace Eigen;
 using namespace pmp;
 using namespace std;
+using namespace Eigen;
+using namespace alglib;
 
 typedef Eigen::Triplet<double> Tri;
 
@@ -38,7 +47,6 @@ public:
 		const Eigen::MatrixXd& input_m);
 	void FitMeasurements(
 		SurfaceMesh& mesh,
-		Eigen::Matrix3Xd& res_verts,
 		const Eigen::Matrix3Xd& vertices,
 		const Eigen::MatrixXd& measurements,
 		std::vector<std::vector<int>>& point_idx,
@@ -60,7 +68,7 @@ public:
 	void ShowMessage(const string& msg);
 	void ConstructCoefficientMatrix();
 	void FitMeasure::RecoverMeasure(
-		Eigen::MatrixXd& measurelist, 
+		Eigen::MatrixXd& measurelist,
 		Eigen::MatrixXd& one_measure);
 	void FitMeasure::SaveObj(
 		SurfaceMesh& mesh,
@@ -82,12 +90,16 @@ public:
 		Eigen::Matrix3Xd& res_verts,
 		const Eigen::SparseMatrix<double>& L,
 		const Eigen::Matrix3Xd& vertices,
-		Eigen::SparseMatrix<double> & b2,
+		Eigen::SparseMatrix<double>&	b2,
 		std::vector<std::vector<int>>& point_idx,
 		Eigen::SparseMatrix<double> A);
 	void FitMeasure::Mat2Vec_Test(
 		Eigen::SparseMatrix<double>& v,
 		const std::vector<Point>& Vertice);
+
+	void FitMeasure::FitMeasurements();
+	void FitMeasure::nlcfunc1_jac(const real_1d_array &x, real_1d_array &fi, real_2d_array &jac, void *ptr);
+
 protected:
 private:
 	int M_NUM;
@@ -103,8 +115,8 @@ private:
 	Eigen::VectorXd gradient;
 	Eigen::SparseMatrix<double> A;
 	Eigen::SparseMatrix<double> L;
-	Eigen::SparseMatrix<double> b_down;
 	Eigen::SparseMatrix<double> b;
+	Eigen::SparseMatrix<double> b_down;
 	//std::vector<std::vector<int>> point_idx;//[m][n]m个尺寸，每个尺寸n个点，每个点对应的顶点下标
 	std::vector<std::vector<std::vector<double>>> control_points;
 

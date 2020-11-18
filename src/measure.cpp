@@ -23,21 +23,6 @@ Measure::~Measure() { }
 	const Eigen::Matrix3Xd & vertices,
 	const Eigen::Matrix3Xi &facets)
 {
-
-	//cout << "start calculate measure..." << endl;
-	//for (int i = 0; i < control_points.size(); ++i)
-	//{
-	//	for (int j = 0; j < control_points[i].size(); ++j)
-	//	{
-	//		for (int k = 0; k < control_points[i][j].size(); ++k)
-	//		{
-	//			cout << control_points[i][j][k] << "  ";
-	//		}
-	//		cout << endl;
-
-	//	}
-	//}
-
 	Eigen::MatrixXd measure_list;
 	measure_list.resize(1, M_NUM);
 	double vol = 0.0;

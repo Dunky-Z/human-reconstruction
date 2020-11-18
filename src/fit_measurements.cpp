@@ -330,7 +330,6 @@ void FitMeasure::ConstructB(
 */
 void FitMeasure::FitMeasurements(
 	SurfaceMesh& mesh,
-	Eigen::Matrix3Xd& res_verts,
 	const Eigen::Matrix3Xd& vertices,
 	const Eigen::MatrixXd& one_measure,
 	std::vector<std::vector<int>>& point_idx,
@@ -395,10 +394,8 @@ void FitMeasure::RecoverMeasure(Eigen::MatrixXd& measurelist, Eigen::MatrixXd& o
 	Eigen::MatrixXd mean_measure, std_measure;
 	binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "mean_measure").c_str(), mean_measure);
 	binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "std_measure").c_str(), std_measure);
-	//std::cout << one_measure << std::endl;
 	one_measure = one_measure.cwiseProduct(std_measure);
 	one_measure += mean_measure;
-	//std::cout << one_measure << std::endl;
 }
 
 void FitMeasure::CaculateLaplacianCotMatrix_Test(
@@ -444,7 +441,6 @@ void FitMeasure::CaculateLaplacianCotMatrix_Test(
 			p[i] = mesh.position(*vf);
 			id[i] = (*vf).idx();
 		}
-
 		for (int i = 0; i < 3; ++i)
 		{
 			int j = (i + 1) % 3, k = (j + 1) % 3;

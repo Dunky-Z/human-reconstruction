@@ -112,8 +112,6 @@ $$
 $$
 E =  \sum\left\|L\mathbf{V}' -  L\mathbf{V} \right\|^{2}+
 \sum_{d \in \mathcal{D}}\left(\|v_i - v_j \|^{2}-l_{t}(d)^{2}\right)^{2}
-+
- \sum_{e \in \mathcal{P}}\left(\|v_k - v_l \|^{2}-l_{t}(e)^{2}\right)^{2}
 $$
 
 其中$\mathcal{D},\mathcal{P}$分别为欧式距离边集合，测地距离边集合。 $V$为原模型顶点坐标，$V'$为目标模型顶点坐标。假定变形前后长度比例不变，可以通过下式算出逼近的长度：
@@ -149,8 +147,6 @@ $$
 $$
 E =  \sum\left\|L\mathbf{V}' -  L\mathbf{V} \right\|^{2}+
 \sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}_d\|
-+
-\sum_{e \in \mathcal{P}}\|  (v_{k} - v_{l}) - \mathbf{d}_e\|
 $$
 
 改写为矩阵形式为：
@@ -159,12 +155,10 @@ $$
 \left[\begin{array}{c}
 L\\
 C_1 \\
-C_2
 \end{array}\right] V
 =\left[\begin{array}{c}
 \Delta\\
 \mathbf{d}_d \\
-\mathbf{d}_e
 \end{array}\right]
 $$
 
@@ -175,14 +169,40 @@ $$
 A = \left[\begin{array}{c}
 L\\
 C_1 \\
-C_2
 \end{array}\right],
 b=\left[\begin{array}{c}
 \Delta\\
 \mathbf{d}_d \\
-\mathbf{d}_e
 \end{array}\right]
 $$
 
 A大小为：$(3|V| + 3|M|) \times (3|V|)$，V大小为$3|V|\times 1$，b大小为：$(3|V| + 3|M|) \times 1$。$|M|$为尺寸相关的所有边的个数。
 在分解矩阵$A^TA$时，内存爆了，占用高达20G，无法分解计算。
+
+
+#### 增广拉格朗日乘子法
+对于一个标准问题
+
+$$
+\min f(x)
+$$
+
+$$
+\text{s.t.} Ax=b
+$$
+
+拉格朗日函数为
+$$
+\mathcal{L}(x,\alpha)=f(x) + \alpha^T(Ax- b)
+$$增广拉格朗日函数为
+$$
+\mathcal{L}(x,\alpha,\beta)=f(x) + \alpha^T(Ax- b) + \frac{\beta}{2}\|Ax-b\|^2_2 
+$$
+
+迭代算法
+$$
+\left\{\begin{array}{l}
+x^{k+1}=\arg \min _{x} \mathcal{L}_{c}\left(x, \alpha^{k}\right) \\
+\alpha^{k+1}=\alpha^{k}+\beta\left(A x^{k+1}-b\right)
+\end{array}\right.
+$$
