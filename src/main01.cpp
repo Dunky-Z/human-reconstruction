@@ -10,32 +10,256 @@
 //	cout << t << endl; //输出时间
 //	return 0;
 //}
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include "fit_measurements.h"
 #include "../alglib/cpp/src/optimization.h"
 
+using namespace pmp;
+using namespace std;
+using namespace Eigen;
 using namespace alglib;
-void  nlcfunc1_jac(const real_1d_array &x, real_1d_array &fi, real_2d_array &jac, void *ptr)
+
+typedef Eigen::Triplet<double> Tri;
+
+Eigen::Matrix3Xd vertices;
+Eigen::Matrix3Xi faces;
+Eigen::SparseMatrix<double> A;
+Eigen::SparseMatrix<double> L;
+Eigen::SparseMatrix<double> b;
+Eigen::SparseMatrix<double> b_down;
+int num_verts;
+int num_measure;
+int num_edge_all;
+std::vector<int> edge;
+
+std::vector<Tri> triplets_A;
+std::vector<std::vector<std::vector<double>>> control_points;
+
+
+void ShowMessage(const string& msg)
 {
-	//
-	// this callback calculates
-	//
-	//     f0(x0,x1) = -x0+x1
-	//     f1(x0,x1) = x0^2+x1^2-1
-	//
-	// and Jacobian matrix J = [dfi/dxj]
-	//
-	fi[0] = -x[0] + x[1];
-	fi[1] = x[0] * x[0] + x[1] * x[1] - 1.0;
-	jac[0][0] = -1.0;
-	jac[0][1] = +1.0;
-	jac[1][0] = 2 * x[0];
-	jac[1][1] = 2 * x[1];
+	std::cout << msg.c_str() << std::endl;
+}
+
+void ConstructCoefficientMatrix()
+{
+	A.resize(num_verts + num_edge_all, num_verts);
+	A.setFromTriplets(triplets_A.begin(), triplets_A.end());
+	ShowMessage(string("Construct A"));
+}
+
+float CalcTargetLen(
+	const Eigen::MatrixXd& one_measure,
+	const float& cur_len,
+	const int& index,
+	const Eigen::MatrixXd& input_m)
+{
+	float m = one_measure.coeff(index + 1, 0) / 1000.0;
+	float cur_len_p = cur_len / m;
+	float target_len_p = input_m.coeff(index, 0) / 1000.0;
+	float target_len = cur_len_p * target_len_p;
+	return target_len;
+}
+
+void SaveEdge(
+	std::vector<std::vector<int>>& point_idx)
+{
+	//保存每个尺寸的边数量
+	//std::vector<int> edge;//size = 18
+	for (auto& num_v : point_idx)
+	{
+		if (num_v.size() > 2)
+		{
+			edge.push_back(num_v.size());
+		}
+		else
+		{
+			edge.push_back(1);
+			//continue;
+		}
+	}
+}
+
+void ConstructCoefficientMatrixBottom(
+	std::vector<std::vector<int>>& point_idx,
+	const Eigen::Matrix3Xd &vertices,
+	const Eigen::MatrixXd& one_measure,
+	const Eigen::MatrixXd& input_m)
+{
+	//std::vector<Tri> triplets;
+	num_verts = vertices.cols();
+	num_measure = point_idx.size();	//18
+	SaveEdge(point_idx);
+	num_edge_all = std::accumulate(edge.begin(), edge.end(), 0);	//所有边的数量1246
+	b_down.resize(num_edge_all, 3);
+	SetTriplets(vertices, input_m, point_idx, one_measure);
+}
+
+void SetTriplets(
+	const Eigen::Matrix3Xd& vertices,
+	const Eigen::MatrixXd& input_m,
+	const std::vector<std::vector<int>>& point_idx,
+	const Eigen::MatrixXd& one_measure)
+{
+	triplets_A.reserve(7);
+	int row = 0;
+	for (int i = 0; i < num_measure; ++i)
+	{
+		//遍历每个尺寸的每条边
+		for (int j = 0; j < edge[i]; ++j)
+		{
+			int edge_0;
+			int edge_1;
+			//i == 0身高信息
+			if (i == 0)
+			{
+				edge_0 = point_idx[i][j];
+				edge_1 = point_idx[i][j + 1];
+			}
+			else
+			{
+				edge_0 = point_idx[i][j % edge[i]];
+				edge_1 = point_idx[i][(j + 1) % edge[i]];
+			}
+			const Eigen::Vector3d v0 = vertices.col(edge_0);
+			const Eigen::Vector3d v1 = vertices.col(edge_1);
+			const Eigen::Vector3d edge_01 = v1 - v0;
+			const double edge_len = edge_01.norm();
+			double target_len = CalcTargetLen(one_measure, edge_len, i, input_m);
+			//std::cout << edge_len << std::endl;
+			Eigen::Vector3d auxd = (edge_01 / edge_len) * target_len;
+
+			int _row = num_verts + row + j;
+			int _col0 = edge_0;
+			int _col1 = edge_1;
+			triplets_A.emplace_back(Tri(_row, _col0, -1));
+			triplets_A.emplace_back(Tri(_row, _col1, 1));
+			for (int k = 0; k < 3; ++k)
+			{
+				b_down.insert(row + j, k) = auxd[k];
+			}
+			//std::cout << "row: " << row + j * 3 + k << " " << "col: " << edge_0 * 3 + k << " " << auxd[k] << std::endl;
+		}
+		row += edge[i];
+	}
+	std::cout << row << std::endl;
+}
+
+void SetTriplets(
+	vec3 p[3],
+	int id[3])
+{
+	triplets_A.reserve(7);
+	float cot[3];
+	for (int i = 0; i < 3; ++i)
+	{
+		int j = (i + 1) % 3, k = (j + 1) % 3;
+		cot[i] = dot(p[j] - p[i], p[k] - p[i]) / norm(cross(p[j] - p[i], p[k] - p[i]));
+		triplets_A.push_back({ id[j],id[k], -0.5 * cot[i] });
+		triplets_A.push_back({ id[k],id[j], -0.5 * cot[i] });
+
+	}
+	for (int i = 0; i < 3; ++i)
+	{
+		triplets_A.push_back({ id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3]) });
+	}
+
+}
+void CaculateLaplacianCotMatrix(
+	const SurfaceMesh& mesh)
+{
+	//std::vector<Tri> triplets;
+	const int p_num = mesh.n_vertices();
+	L.resize(p_num, p_num);
+	auto fit = mesh.faces_begin();
+	do {
+		auto vf = mesh.vertices(*fit);
+		Point p[3];
+		int id[3];
+		for (int i = 0; i < 3; ++i, ++vf)
+		{
+			p[i] = mesh.position(*vf);
+			id[i] = (*vf).idx();
+		}
+		SetTriplets(p, id);
+	} while (++fit != mesh.faces_end());
+	L.setFromTriplets(triplets_A.begin(), triplets_A.end());
+	std::cout << "Calc Laplacian Done !" << std::endl;
+}
+
+void ConstructB(
+	Eigen::SparseMatrix<double>& b1,
+	Eigen::SparseMatrix<double>& b2)
+{
+	b.resize(num_verts + num_edge_all, 3);
+	for (int i = 0; i < num_verts; ++i)
+		for (int j = 0; j < 3; ++j)
+		{
+			b.insert(i, j) = b1.coeff(i, j);
+		}
+
+	for (int i = 0; i < num_edge_all; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			b.insert(num_verts + i, j) = b2.coeff(i, j);
+		}
+	}
+	ShowMessage(string("FillB"));
+}
+
+void Mat2Vec(
+	Eigen::SparseMatrix<double>& v,
+	const Eigen::Matrix3Xd& vertices)
+{
+	for (int i = 0; i < num_verts; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			v.coeffRef(i, j) = vertices.coeff(j, i);
+		}
+	}
 }
 
 int main(int argc, char **argv)
 {
+	FitMeasure	fit;
+	SurfaceMesh mesh;
+	Measure		measure;
+	Reshaper	reshaper;
+
+
+	//输入尺寸
+	Eigen::MatrixXd input_m(18, 1);
+	input_m << 1695.61, 460.47, 1312.81, 1098.78, 1134.35, 890.41, 823.41, 419.05,
+		824.58, 1126.35, 1299.55, 1336.46, 649.92, 623.889, 204.25, 1313.27, 442.89, 726.47;
+
+	reshaper.SaveBinControlPoint(control_points);
+	mesh.read((DATASET_PATH + "1_.obj").c_str());
+	meshio::ReadObj((DATASET_PATH + "1_.obj").c_str(), vertices, faces);
+	Eigen::MatrixXd one_measure;
+	one_measure.resize(19, 1);
+	one_measure = measure.CalcMeasure(control_points, vertices, faces);
+
+	std::vector<std::vector<int>> point_idx;
+	reshaper.SaveBinEdge(control_points, point_idx);
+
+	reshaper.SaveBinControlPoint(control_points);
+	CaculateLaplacianCotMatrix(mesh);
+	ConstructCoefficientMatrixBottom(point_idx, vertices, one_measure, input_m);
+	Eigen::SparseMatrix<double> v(num_verts, 3);
+	Mat2Vec(v, vertices);
+
+	Eigen::SparseMatrix<double> b1 = L * v;
+	ShowMessage(string("b1 = L * v"));
+	ConstructB(b1, b_down);
+
+
+	alglib::real_1d_array x;
+	x.attach_to_ptr(num_verts * 3, vertices.data());
 	//
 	// This example demonstrates minimization of
 	//
@@ -45,7 +269,6 @@ int main(int argc, char **argv)
 	//
 	//    x0^2 + x1^2 - 1 = 0
 	//
-	real_1d_array x0 = "[0,0]";
 	real_1d_array s = "[1,1]";
 	double epsx = 0.000001;
 	ae_int_t maxits = 0;
@@ -56,7 +279,7 @@ int main(int argc, char **argv)
 	// * epsx=0.000001  stopping condition for inner iterations
 	// * s=[1,1]        all variables have unit scale
 	//
-	minnlccreate(2, x0, state);
+	minnlccreate(x, state);
 	minnlcsetcond(state, epsx, maxits);
 	minnlcsetscale(state, s);
 
@@ -177,4 +400,35 @@ int main(int argc, char **argv)
 	printf("%s\n", ogrep.nonc0suspected ? "true" : "false"); // EXPECTED: false
 	printf("%s\n", ogrep.nonc1suspected ? "true" : "false"); // EXPECTED: false
 	return 0;
+}
+
+
+void  nlcfunc1_jac(const real_1d_array &x, real_1d_array &fi, real_2d_array &jac, void *ptr)
+{
+	//
+	// this callback calculates
+	//
+	//     f0(x0,x1) = -x0+x1
+	//     f1(x0,x1) = x0^2+x1^2-1
+	//
+	// and Jacobian matrix J = [dfi/dxj]
+	//
+	alglib::real_1d_array temp(x);
+	Eigen::Map<Matrix3Xd> V0(temp.getcontent(), 3, num_verts);
+	auto F = A * V0;
+
+	for (int i = 0; i < 3 * (num_verts + num_edge_all); ++i)
+	{
+		fi[i] = F.coeff(i / 3, i % 3) - b.coeff(i / 3, i % 3);
+	}
+	auto AT = A.transpose();
+	auto ATA = AT * A;
+	Eigen::SparseMatrix<double> jacob = 2*AT*(A*V0 - b);
+	for (int i = 0; i < (num_verts+num_edge_all); ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			jac[i][j] = jacob.coeff(i, j);
+		}
+	}
 }
