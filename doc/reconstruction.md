@@ -93,7 +93,7 @@ $$y = \sigma x + \mu$$
 我求平均误差的方式是，给定一个模型的原始尺寸。随机丢掉1-18个尺寸，然后用剩余尺寸预测。重复进行100次，然后取平均误差。Song原文里也没说是如何去平均误差的。如果只人为固定丢掉的尺寸，比如身高或者腰围这些尺寸较大的数据，误差就会降低很多。
 
 #### 算法概述
-测量的数据分为三类，欧式距离值，测地距离值和围长值，对于每个待求的网格$X_i$，在网格上对应的求出的数据尽量和真实值保持一致，这就是一个最小化能量函数的问题 。对于欧式距离，给定目标长度$l_t(d)$，表示线段$d$两个端点$v_i$,$v_j$的欧式距离。能量函数可以定义为：
+对于每个待求的网格$X_i$。对于欧式距离，给定目标长度$l_t(d)$，表示线段$d$两个端点$v_i$,$v_j$的欧式距离。能量函数可以定义为：
 
 $$
 E_{\mathcal{D}} = \sum_{d \in \mathcal{D}}\left(\|v_i - v_j \|^{2}-l_{t}(d)^{2}\right)^{2}
@@ -139,14 +139,14 @@ $$
 因此当$\mathbf{d}=l_t{d}(\mathbf{v}_{ij}/\|\mathbf{v}_{ij}\|)$时，方程左右都有相同的极小值。因此重写能量函数为：
 
 $$
-E_{\mathcal{D}} = \sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}\|
+E_{\mathcal{D}} = \sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}\|^2
 $$
 
 同理可以改写测地距离的能量函数，最终能量函数函数为：
 
 $$
 E =  \sum\left\|L\mathbf{V}' -  L\mathbf{V} \right\|^{2}+
-\sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}_d\|
+\sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}_d\|^2
 $$
 
 改写为矩阵形式为：
@@ -177,7 +177,6 @@ b=\left[\begin{array}{c}
 $$
 
 A大小为：$(3|V| + 3|M|) \times (3|V|)$，V大小为$3|V|\times 1$，b大小为：$(3|V| + 3|M|) \times 1$。$|M|$为尺寸相关的所有边的个数。
-在分解矩阵$A^TA$时，内存爆了，占用高达20G，无法分解计算。
 
 
 #### 增广拉格朗日乘子法
@@ -206,3 +205,32 @@ x^{k+1}=\arg \min _{x} \mathcal{L}_{c}\left(x, \alpha^{k}\right) \\
 \alpha^{k+1}=\alpha^{k}+\beta\left(A x^{k+1}-b\right)
 \end{array}\right.
 $$
+
+#### Alglib-minnlc求解器
+
+- 目标函数 
+每次只求解一个维度，假设只求解$x$坐标：
+$$
+f(V_{x}) = \sum\left\|L\mathbf{V}'_{x} -  L\mathbf{V}_{x} \right\|^{2}
+$$
+
+- 约束条件
+$$
+\|  \vec{v}_{1x} - \mathbf{d}_{1x}\|^2 = 0 \\
+\|  \vec{v}_{2x} - \mathbf{d}_{2x}\|^2 = 0 \\
+\vdots\\
+\|  \vec{v}_{nx} - \mathbf{d}_{nx}\|^2 = 0 \\
+$$其中$\vec{v} = v_i - v_j$,$n$为测量尺寸所涉及的边的个数
+矩阵形式：
+$$
+\|C_t\mathbf{V}'_{x}-\mathbf{d}_{tx}\|^2=0,t\in[1,2,3,\dots,n]
+$$
+- 目标函数Jacobian矩阵
+$$
+J_f(X_{i}) = 2L^T(LX - \Delta)
+$$
+- 约束条件Jacobian矩阵
+$$
+J_f(X_{i}) = 2C^T(CX - \mathbf{d}_{x})
+$$其中$X:V_x,\Delta = L\mathbf{V}_{x}$
+
