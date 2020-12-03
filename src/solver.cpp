@@ -139,13 +139,11 @@ void SetTriplets(
 		cot[i] = dot(p[j] - p[i], p[k] - p[i]) / norm(cross(p[j] - p[i], p[k] - p[i]));
 		triplets_A.push_back({ id[j],id[k], -0.5 * cot[i] });
 		triplets_A.push_back({ id[k],id[j], -0.5 * cot[i] });
-
 	}
 	for (int i = 0; i < 3; ++i)
 	{
 		triplets_A.push_back({ id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3]) });
 	}
-
 }
 void CaculateLaplacianCotMatrix(
 	const SurfaceMesh& mesh)
@@ -175,10 +173,12 @@ void ConstructB(
 {
 	b.resize(num_verts + num_edge_all, 3);
 	for (int i = 0; i < num_verts; ++i)
+	{
 		for (int j = 0; j < 3; ++j)
 		{
 			b.insert(i, j) = b1.coeff(i, j);
 		}
+	}
 
 	for (int i = 0; i < num_edge_all; ++i)
 	{
@@ -250,42 +250,6 @@ void solv_three()
 		solve_one(vertices_one);
 	}
 }
-int main(int argc, char **argv)
-{
-	FitMeasure	fit;
-	SurfaceMesh mesh;
-	Measure		measure;
-	Reshaper	reshaper;
-	// ‰»Î≥ﬂ¥Á
-	Eigen::MatrixXd input_m(18, 1);
-	input_m << 1695.61, 460.47, 1312.81, 1098.78, 1134.35, 890.41, 823.41, 419.05,
-		824.58, 1126.35, 1299.55, 1336.46, 649.92, 623.889, 204.25, 1313.27, 442.89, 726.47;
-
-	reshaper.SaveBinControlPoint(control_points);
-	mesh.read((DATASET_PATH + "1_.obj").c_str());
-	meshio::ReadObj((DATASET_PATH + "1_.obj").c_str(), vertices, faces);
-	Eigen::MatrixXd one_measure;
-	one_measure.resize(19, 1);
-	one_measure = measure.CalcMeasure(control_points, vertices, faces);
-	std::vector<std::vector<int>> point_idx;
-	reshaper.SaveBinEdge(control_points, point_idx);
-	reshaper.SaveBinControlPoint(control_points);
-	CaculateLaplacianCotMatrix(mesh);
-	ConstructCoefficientMatrix(point_idx, vertices, one_measure, input_m);
-	ConstructCoefficientMatrixBottom();
-	Eigen::SparseMatrix<double> v(num_verts, 3);
-	Mat2Vec(v, vertices);
-
-	Eigen::SparseMatrix<double> b1 = L * v;
-	b_up = b1;
-	ShowMessage(string("b1 = L * v"));
-	ConstructB(b1, b_down);
-
-	//solv_three();
-	Eigen::MatrixXd vertices_one = vertices.row(0);
-	solve_one(vertices_one);
-	return 0;
-}
 
 void  nlcfunc1_jac(const real_1d_array& x, real_1d_array& fi, real_2d_array& jac, void* ptr)
 {
@@ -320,4 +284,41 @@ void  nlcfunc1_jac(const real_1d_array& x, real_1d_array& fi, real_2d_array& jac
 			jac[i][j] = jacob_down.coeff(j, 0);
 		}
 	}
+}
+
+int main(int argc, char **argv)
+{
+	FitMeasure	fit;
+	SurfaceMesh mesh;
+	Measure		measure;
+	Reshaper	reshaper;
+	// ‰»Î≥ﬂ¥Á
+	Eigen::MatrixXd input_m(18, 1);
+	input_m << 1695.61, 460.47, 1312.81, 1098.78, 1134.35, 890.41, 823.41, 419.05,
+		824.58, 1126.35, 1299.55, 1336.46, 649.92, 623.889, 204.25, 1313.27, 442.89, 726.47;
+
+	reshaper.SaveBinControlPoint(control_points);
+	mesh.read((DATASET_PATH + "1_.obj").c_str());
+	meshio::ReadObj((DATASET_PATH + "1_.obj").c_str(), vertices, faces);
+	Eigen::MatrixXd one_measure;
+	one_measure.resize(19, 1);
+	one_measure = measure.CalcMeasure(control_points, vertices, faces);
+	std::vector<std::vector<int>> point_idx;
+	reshaper.SaveBinEdge(control_points, point_idx);
+	reshaper.SaveBinControlPoint(control_points);
+	CaculateLaplacianCotMatrix(mesh);
+	ConstructCoefficientMatrix(point_idx, vertices, one_measure, input_m);
+	ConstructCoefficientMatrixBottom();
+	Eigen::SparseMatrix<double> v(num_verts, 3);
+	Mat2Vec(v, vertices);
+
+	Eigen::SparseMatrix<double> b1 = L * v;
+	b_up = b1;
+	ShowMessage(string("b1 = L * v"));
+	ConstructB(b1, b_down);
+
+	Eigen::MatrixXd vertices_one = vertices.row(0);
+	//solv_three();
+	solve_one(vertices_one);
+	return 0;
 }

@@ -93,7 +93,7 @@ $$y = \sigma x + \mu$$
 我求平均误差的方式是，给定一个模型的原始尺寸。随机丢掉1-18个尺寸，然后用剩余尺寸预测。重复进行100次，然后取平均误差。Song原文里也没说是如何去平均误差的。如果只人为固定丢掉的尺寸，比如身高或者腰围这些尺寸较大的数据，误差就会降低很多。
 
 #### 算法概述
-对于每个待求的网格$X_i$。对于欧式距离，给定目标长度$l_t(d)$，表示线段$d$两个端点$v_i$,$v_j$的欧式距离。能量函数可以定义为：
+对于欧式距离，给定目标长度$l_t(d)$，表示线段$d$两个端点$v_i$,$v_j$的欧式距离。能量函数可以定义为：
 
 $$
 E_{\mathcal{D}} = \sum_{d \in \mathcal{D}}\left(\|v_i - v_j \|^{2}-l_{t}(d)^{2}\right)^{2}
@@ -201,8 +201,53 @@ $$
 迭代算法
 $$
 \left\{\begin{array}{l}
-x^{k+1}=\arg \min _{x} \mathcal{L}_{c}\left(x, \alpha^{k}\right) \\
+x^{k+1}=\arg \min _{x} \mathcal{L}_{c}\left(x, \alpha^{k}\right)\\
 \alpha^{k+1}=\alpha^{k}+\beta\left(A x^{k+1}-b\right)
+\end{array}\right.
+$$
+
+对于本问题
+$$
+\begin{array}{c}
+f(V') = \sum\left\|L\mathbf{V}' -  L\mathbf{V} \right\|^{2}\\
+s.t. \quad CV' = \mathbf{d}
+\end{array}
+$$
+
+拉格朗日函数为：
+$$
+\mathcal{L}(\mathbf{V}',\alpha)=f(\mathbf{V}') + \alpha^T(C\mathbf{V}'- \mathbf{d})
+$$增广拉格朗日函数为
+$$
+\mathcal{L}(\mathbf{V}',\alpha,\beta)=f(\mathbf{V}') + \alpha^T(C\mathbf{V}'- \mathbf{d}) + \frac{\beta}{2}\|C\mathbf{V}'- \mathbf{d}\|^2
+$$
+求解：
+回顾拉格朗日法：
+$$
+\left\{\begin{array}{l}
+\mathbf{V'}^{k+1}= \mathbf{V'}^{k} - \delta^k\nabla\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) = \mathbf{V'}^{k} - \delta^k(\nabla f(\mathbf{V'}^{k}) + C^{T}\alpha^{k})\\
+\alpha^{k+1}=\alpha^{k}+\delta^{k}\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) =\alpha^{k} + \delta^{k}(C\mathbf{V'}^{k}-\mathbf{d})
+\end{array}\right.
+$$
+替换成增广拉格朗日函数的梯度后：
+$$
+\left\{\begin{array}{l}
+\mathbf{V'}^{k+1}= \mathbf{V'}^{k} - \delta^k\nabla\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) = \mathbf{V'}^{k} - \delta^k(\nabla f(\mathbf{V'}^{k}) + C^{T}\alpha^{k} + \beta C^{T}(C\mathbf{V'}^{k}-\mathbf{d}))\\
+\alpha^{k+1}=\alpha^{k}+\delta^{k}\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) =\alpha^{k} + \delta^{k}(C\mathbf{V'}^{k}-\mathbf{d})
+\end{array}\right.
+$$
+但是上式有个东西没有利用起来，就是第一个迭代公式计算出来的$\mathbf{V'}^{k+1}$,在第二个式子计算$\alpha^{k+1}$时还在用$x^{k}$，我们可以将其替换为新的$\mathbf{V'}^{k+1}$:
+$$
+\left\{\begin{array}{l}
+\mathbf{V'}^{k+1}= \mathbf{V'}^{k} - \delta^k\nabla\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) = \mathbf{V'}^{k} - \delta^k(\nabla f(\mathbf{V'}^{k}) + C^{T}\alpha^{k} + \beta C^{T}(C\mathbf{V'}^{k}-\mathbf{d}))\\
+\alpha^{k+1}=\alpha^{k}+\delta^{k}\mathcal{L}(\mathbf{V'}^{k+1},\alpha^{k}) =\alpha^{k} + \delta^{k}(C\mathbf{V'}^{k+1}-\mathbf{d})
+\end{array}\right.
+$$
+此外，增广拉格朗日函数里面的罚参数$\beta$还没利用到。为了让罚参数起作用，我们还可以把第二个式子的步长替换为罚参数:：
+$$
+\left\{\begin{array}{l}
+\mathbf{V'}^{k+1}=\arg \min _{V'} \mathcal{L}_{c}\left(\mathbf{V}', \alpha^{k}\right)\\
+\alpha^{k+1}=\alpha^{k}+\beta\left(C\mathbf{V'}^{k+1}-\mathbf{d}\right)
 \end{array}\right.
 $$
 
@@ -216,10 +261,12 @@ $$
 
 - 约束条件
 $$
+\begin{array}{c}
 \|  \vec{v}_{1x} - \mathbf{d}_{1x}\|^2 = 0 \\
 \|  \vec{v}_{2x} - \mathbf{d}_{2x}\|^2 = 0 \\
 \vdots\\
 \|  \vec{v}_{nx} - \mathbf{d}_{nx}\|^2 = 0 \\
+\end{array}
 $$其中$\vec{v} = v_i - v_j$,$n$为测量尺寸所涉及的边的个数
 矩阵形式：
 $$
