@@ -36,11 +36,38 @@ public:
 
 	void CalcEuclideanGradient(Eigen::VectorXd& gradient, Matrix3Xd& vertices);
 	void CalcGeodesicGradient(Eigen::VectorXd& gradient, Matrix3Xd& vertices, Eigen::MatrixXd& measurements, Eigen::MatrixXd& input_m);
-	float CalcTargetLen(const Eigen::MatrixXd& measurements, const float& cur_len, const int& index, const Eigen::MatrixXd& input_m);
 	void CalcEnergy(double& energy, Eigen::Matrix3Xd& vertices);
+	void FitMeasure::CaculateLaplacianCotMatrix_Test(
+		SurfaceMesh& mesh,
+		Eigen::SparseMatrix<double> & L,
+		std::vector<Tri>& triplets,
+		Eigen::SparseMatrix<double>& b);
+	void FitMeasure::ConstructCoefficientMatrixBottom_Test(
+		SurfaceMesh& mesh,
+		std::vector<std::vector<int>>& point_idx,
+		const Eigen::MatrixXd& measurements,
+		Eigen::SparseMatrix<double>& b,
+		const Eigen::MatrixXd& input_m,
+		std::vector<Tri>& triplets);
+	void FitMeasure::FitMeasurements_Test(
+		SurfaceMesh& mesh,
+		Eigen::Matrix3Xd& res_verts,
+		const Eigen::SparseMatrix<double>& L,
+		const Eigen::Matrix3Xd& vertices,
+		Eigen::SparseMatrix<double>&	b2,
+		std::vector<std::vector<int>>& point_idx,
+		Eigen::SparseMatrix<double> A);
+	void FitMeasure::Mat2Vec_Test(
+		Eigen::SparseMatrix<double>& v,
+		const std::vector<Point>& Vertice);
+	float CalcTargetLen(
+		const Eigen::MatrixXd& measurements, 
+		const float& cur_len, 
+		const int& index, 
+		const Eigen::MatrixXd& input_m);
 	void CaculateLaplacianCotMatrix(
 		const SurfaceMesh& mesh);
-	void ConstructCoefficientMatrixBottom(
+	void ConstructCoefficientMatrix(
 		std::vector<std::vector<int>>& point_idx,
 		const Eigen::Matrix3Xd& vertices,
 		const Eigen::MatrixXd& measurements,
@@ -66,48 +93,35 @@ public:
 		Eigen::SparseMatrix<double>& b1,
 		Eigen::SparseMatrix<double>& b2);
 	void ShowMessage(const string& msg);
-	void ConstructCoefficientMatrix();
+	void ConstructCoefficientMatrixBottom();
 	void FitMeasure::RecoverMeasure(
 		Eigen::MatrixXd& measurelist,
 		Eigen::MatrixXd& one_measure);
 	void FitMeasure::SaveObj(
 		SurfaceMesh& mesh,
 		Eigen::SparseMatrix<double>& new_vertice);
-	void FitMeasure::CaculateLaplacianCotMatrix_Test(
+	void FitMeasure::SaveObj(
 		SurfaceMesh& mesh,
-		Eigen::SparseMatrix<double> & L,
-		std::vector<Tri>& triplets,
-		Eigen::SparseMatrix<double>& b);
-	void FitMeasure::ConstructCoefficientMatrixBottom_Test(
-		SurfaceMesh& mesh,
-		std::vector<std::vector<int>>& point_idx,
-		const Eigen::MatrixXd& measurements,
-		Eigen::SparseMatrix<double>& b,
-		const Eigen::MatrixXd& input_m,
-		std::vector<Tri>& triplets);
-	void FitMeasure::FitMeasurements_Test(
-		SurfaceMesh& mesh,
-		Eigen::Matrix3Xd& res_verts,
-		const Eigen::SparseMatrix<double>& L,
-		const Eigen::Matrix3Xd& vertices,
-		Eigen::SparseMatrix<double>&	b2,
-		std::vector<std::vector<int>>& point_idx,
-		Eigen::SparseMatrix<double> A);
-	void FitMeasure::Mat2Vec_Test(
-		Eigen::SparseMatrix<double>& v,
-		const std::vector<Point>& Vertice);
-
-	void FitMeasure::FitMeasurements();
-	void FitMeasure::nlcfunc1_jac(const real_1d_array &x, real_1d_array &fi, real_2d_array &jac, void *ptr);
+		Eigen::MatrixX3d& new_vertice);
+	Eigen::SparseMatrix<double> FitMeasure::CalcGradient(
+		Eigen::MatrixXd& V0);
+	Eigen::MatrixXd FitMeasure::SolveOneDimension(
+		Eigen::MatrixXd& vertices_one);
+	Eigen::MatrixX3d FitMeasure::AULSolver(
+		const Eigen::Matrix3Xd& vertices);
 
 protected:
 private:
 	int M_NUM;
 	const double step = 1;
+	const double eps = 1e-6;
+	double delta = 0.01;
+	int b_col = 0;
 	int num_measure;
 	int num_edge_all;
 	int num_verts;
 	std::vector<Tri> triplets_A;
+	std::vector<Tri> triplets_C;
 	std::vector<int> edge;//size = 18
 	std::vector<Point> Vertice;
 	Eigen::Matrix3Xd verts;
@@ -115,7 +129,9 @@ private:
 	Eigen::VectorXd gradient;
 	Eigen::SparseMatrix<double> A;
 	Eigen::SparseMatrix<double> L;
+	Eigen::SparseMatrix<double> C;
 	Eigen::SparseMatrix<double> b;
+	Eigen::SparseMatrix<double> b_up;
 	Eigen::SparseMatrix<double> b_down;
 	//std::vector<std::vector<int>> point_idx;//[m][n]m个尺寸，每个尺寸n个点，每个点对应的顶点下标
 	std::vector<std::vector<std::vector<double>>> control_points;

@@ -229,6 +229,7 @@ $$
 \alpha^{k+1}=\alpha^{k}+\delta^{k}\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) =\alpha^{k} + \delta^{k}(C\mathbf{V'}^{k}-\mathbf{d})
 \end{array}\right.
 $$
+
 替换成增广拉格朗日函数的梯度后：
 $$
 \left\{\begin{array}{l}

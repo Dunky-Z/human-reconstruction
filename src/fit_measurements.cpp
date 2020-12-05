@@ -9,6 +9,268 @@ using namespace std;
 FitMeasure::FitMeasure() {}
 
 FitMeasure::~FitMeasure() {}
+//
+//
+//void FitMeasure::CaculateLaplacianCotMatrix_Test(
+//	SurfaceMesh& mesh,
+//	Eigen::SparseMatrix<double>& L,
+//	std::vector<Tri>& triplets,
+//	Eigen::SparseMatrix<double>& b)
+//{
+//	//std::vector<Tri> triplets;
+//	const int p_num = mesh.n_vertices();
+//	//std::vector<int> fix{ 275,12478,21,2,3,12222,33,444,555,666,777,6663,4443};
+//	//std::vector<int> mov{ 4986 }; //position[-0.316209 0.298498 - 0.088143]
+//	std::vector<int> fix{ 1031 };
+//	std::vector<int> mov{ 0 };
+//	//vertex# 1031
+//	//	position[0.997592 0.049009 0.000000]
+//	//for (auto v : mesh.vertices())
+//	//{
+//	//	//圆柱体z坐标小于11固定
+//	//	if (mesh.position(v)[2] < -0.8 || mesh.position(v)[2] > 0.6)
+//	//	{
+//	//		fix.push_back(v.idx());
+//	//	}
+//	//	//设置z坐标大于18为移动
+//	//	//if (mesh.position(v)[2] >= 15)
+//	//	//{
+//	//	//	mov.push_back(v.idx());
+//	//	//}
+//	//}
+//	int num_fix = fix.size();
+//	int num_mov = mov.size();
+//	auto fit = mesh.faces_begin();
+//	triplets.reserve(20);
+//	L.resize(p_num, p_num);
+//	do
+//	{
+//		auto vf = mesh.vertices(*fit);
+//		Point p[3];
+//		double cot[3];
+//		int id[3];
+//		for (int i = 0; i < 3; ++i, ++vf)
+//		{
+//			p[i] = mesh.position(*vf);
+//			id[i] = (*vf).idx();
+//		}
+//		for (int i = 0; i < 3; ++i)
+//		{
+//			int j = (i + 1) % 3, k = (j + 1) % 3;
+//			cot[i] = dot(p[j] - p[i], p[k] - p[i]) / norm(cross(p[j] - p[i], p[k] - p[i]));
+//
+//			triplets.push_back({ id[j], id[k], -0.5 * cot[i] });
+//			triplets.push_back({ id[k], id[j], -0.5 * cot[i] });
+//		}
+//		for (int i = 0; i < 3; ++i)
+//		{
+//			triplets.push_back({ id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3]) });
+//		}
+//
+//	} while (++fit != mesh.faces_end());
+//	L.setFromTriplets(triplets.begin(), triplets.end());
+//
+//	for (int i = 0; i < num_fix; ++i)
+//	{
+//		triplets.emplace_back(Tri(p_num + i, fix[i], 1));
+//	}
+//
+//	for (int i = 0; i < num_mov; ++i)
+//	{
+//		triplets.emplace_back(Tri(p_num + num_fix + i, mov[i], 1));
+//	}
+//	Eigen::SparseMatrix<double> v;
+//	v.resize(p_num, 3);
+//	std::vector<Tri> tri_v;
+//	tri_v.reserve(3);
+//	int i = 0;
+//	for (const auto &v_it : mesh.vertices())
+//	{
+//		Point t = mesh.position(v_it);
+//		tri_v.emplace_back(Tri(i, 0, t[0]));
+//		tri_v.emplace_back(Tri(i, 1, t[1]));
+//		tri_v.emplace_back(Tri(i, 2, t[2]));
+//		i++;
+//	}
+//	v.setFromTriplets(tri_v.begin(), tri_v.end());
+//	Eigen::SparseMatrix<double> A;
+//	A.resize(p_num + num_fix + num_mov, p_num);
+//	A.setFromTriplets(triplets.begin(), triplets.end());
+//	b = L * v;
+//	b.conservativeResize(p_num + num_fix + num_mov, 3);
+//	for (int i = 0; i < num_fix; ++i)
+//	{
+//		for (int j = 0; j < 3; ++j)
+//		{
+//			b.insert(p_num + i, j) = v.coeff(fix[i], j);
+//		}
+//	}
+//
+//	//b(3 * p_num + 3 * num_fix + 0) = -0.55;
+//	//b(3 * p_num + 3 * num_fix + 1) = 0.35;
+//	//b(3 * p_num + 3 * num_fix + 2) = -0.088;
+//	//for (int i = 0; i < num_mov; ++i)
+//	//{
+//	//	for (int j = 0; j < 3; ++j)
+//	//	{
+//	//		if (j == 2)
+//	//			b.coeffRef(p_num + num_fix + i, j) = v.coeff(mov[i], j) + 5.0;
+//	//		else
+//	//			b.coeffRef(p_num + num_fix + i, j) = v.coeff(mov[i], j);
+//	//	}
+//	//}
+//	b.insert(p_num + num_fix, 0) = v.coeff(mov[0], 0) - 15;
+//	b.insert(p_num + num_fix, 1) = v.coeff(mov[0], 1);
+//	b.insert(p_num + num_fix, 2) = v.coeff(mov[0], 2);
+//	//std::cout << b << std::endl;
+//	//position[-0.316209 0.298498 - 0.088143]
+//
+//	auto AT = A.transpose();
+//	ShowMessage(string("AT"));
+//
+//	Eigen::SparseMatrix<double> ATA = AT * A;
+//	Eigen::SimplicialCholesky<Eigen::SparseMatrix<double>> solver(ATA);
+//	ShowMessage(string("ATA"));
+//
+//	if (solver.info() != Eigen::Success)
+//		ShowMessage(string(">Solve Failed"));
+//	//Eigen::Matrix3Xi facets;
+//	//binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "facets").c_str(), facets);
+//	Eigen::MatrixXd new_vertice(p_num, 3);
+//	new_vertice = solver.solve(AT*b);
+//	//new_vertice.col(1) = solver.solve(AT*b.col(1));
+//	//new_vertice.col(2) = solver.solve(AT*b.col(2));
+//	ShowMessage(string(">Solve Success"));
+//
+//	//meshio::SaveObj((BIN_DATA_PATH + "res.obj").c_str(), res_verts, facets);
+//
+//	for (auto v : mesh.vertices())
+//	{
+//		Point& pos = mesh.position(v);
+//		pos[0] = new_vertice.coeff(v.idx(), 0);
+//		pos[1] = new_vertice.coeff(v.idx(), 1);
+//		pos[2] = new_vertice.coeff(v.idx(), 2);
+//	}
+//	mesh.write((BIN_DATA_PATH + "res.obj").c_str());
+//}
+//
+//
+//void FitMeasure::ConstructCoefficientMatrixBottom_Test(
+//	SurfaceMesh& mesh,
+//	std::vector<std::vector<int>>& point_idx,
+//	const Eigen::MatrixXd& measurements,
+//	Eigen::SparseMatrix<double>& b,
+//	const Eigen::MatrixXd& input_m,
+//	std::vector<Tri>& triplets)
+//{
+//	vector<Point> Vertice;
+//	for (const auto &v_it : mesh.vertices())
+//	{
+//		Point t = mesh.position(v_it);
+//		Vertice.push_back(t);
+//	}
+//	num_edge_all = 3;
+//	vector<int> point_idx_t{ 12478, 275 };
+//	vector<int> fix{ 10941, 11120 };
+//	//std::vector<Tri> triplets;
+//	num_verts = mesh.n_vertices();
+//	b.resize(3, 3);
+//	triplets.reserve(7);
+//	int row = 0;
+//	//遍历每个尺寸的每条边
+//	for (int j = 0; j < 1; ++j)
+//	{
+//		int edge_0 = point_idx_t[0];
+//		int edge_1 = point_idx_t[1];
+//		const Eigen::Vector3d v0 = Vertice[edge_0];
+//		const Eigen::Vector3d v1 = Vertice[edge_1];
+//		const Eigen::Vector3d edge_01 = v1 - v0;
+//		const double edge_len = edge_01.norm();
+//		double target_len = 1.8;
+//		//std::cout << edge_len << std::endl;
+//		Eigen::Vector3d auxd = (edge_01 / edge_len) * target_len;
+//
+//		int _row = num_verts + j;
+//		int _col0 = edge_0;
+//		int _col1 = edge_1;
+//		triplets.emplace_back(Tri(_row, _col0, -1));
+//		triplets.emplace_back(Tri(_row, _col1, 1));
+//		for (int k = 0; k < 3; ++k)
+//		{
+//			b.insert(j, k) = auxd[k];
+//		}
+//		//std::cout << "row: " << row + j * 3 + k << " " << "col: " << edge_0 * 3 + k << " " << auxd[k] << std::endl;
+//	}
+//
+//	for (int i = 0; i < fix.size(); ++i)
+//	{
+//		triplets.emplace_back(Tri(num_verts + i, fix[i], 1));
+//	}
+//
+//	for (int i = 0; i < fix.size(); ++i)
+//	{
+//		for (int j = 0; j < 3; ++j)
+//		{
+//
+//			//b.insert(1 + i, j) = vertices.coeff(j, fix[i]);
+//		}
+//	}
+//}
+//
+//void FitMeasure::FitMeasurements_Test(
+//	SurfaceMesh& mesh,
+//	Eigen::Matrix3Xd& res_verts,
+//	const Eigen::SparseMatrix<double>& L,
+//	const Eigen::Matrix3Xd& vertices,
+//	Eigen::SparseMatrix<double> & b2,
+//	std::vector<std::vector<int>>& point_idx,
+//	Eigen::SparseMatrix<double> A)
+//{
+//	Eigen::SparseMatrix<double> v(num_verts, 3);
+//	Mat2Vec(v, vertices);
+//
+//	Eigen::SparseMatrix<double> b1 = L * v;
+//	ShowMessage(string("b1 = L * v"));
+//
+//	Eigen::SparseMatrix<double> b(num_verts + num_edge_all, 3);
+//	//ConstructB(b, b1, b2);
+//
+//	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
+//	auto AT = A.transpose();
+//	ShowMessage(string("AT"));
+//
+//	Eigen::SparseMatrix<double> ATA = AT * A;
+//	solver.compute(ATA);
+//	ShowMessage(string("ATA"));
+//
+//	if (solver.info() != Eigen::Success)
+//		ShowMessage(string(">Solve Failed"));
+//
+//	Eigen::SparseMatrix<double> new_vertice = solver.solve(AT * b);
+//	ShowMessage(string(">Solve Success"));
+//	//res_verts = Eigen::Map<Eigen::Matrix3Xd>(vecV.data(), vertices.cols(), 3);
+//	for (auto v : mesh.vertices())
+//	{
+//		Point& pos = mesh.position(v);
+//		pos[0] = new_vertice.coeff(v.idx(), 0);
+//		pos[1] = new_vertice.coeff(v.idx(), 1);
+//		pos[2] = new_vertice.coeff(v.idx(), 2);
+//	}
+//	mesh.write((BIN_DATA_PATH + "res.obj").c_str());
+//}
+//void FitMeasure::Mat2Vec_Test(
+//	Eigen::SparseMatrix<double>& v,
+//	const std::vector<Point>& Vertice)
+//{
+//	for (int i = 0; i < num_verts; ++i)
+//	{
+//		for (int j = 0; j < 3; ++j)
+//		{
+//			v.coeffRef(i, j) = Vertice[i][0];
+//		}
+//	}
+//}
+//
 
 //void CalcEnergy(double& enyg, Eigen::Matrix3Xd& vertices)
 //{
@@ -193,6 +455,11 @@ void FitMeasure::SaveEdge(
 	}
 }
 
+void FitMeasure::ConstructCoefficientMatrixBottom()
+{
+	C.resize(num_edge_all, num_verts);
+	C.setFromTriplets(triplets_C.begin(), triplets_C.end());
+}
 /*!
 *@brief  构建系数矩阵，A矩阵下半部分
 *@param[out]
@@ -205,19 +472,21 @@ void FitMeasure::SaveEdge(
 *@return     void
 */
 
-void FitMeasure::ConstructCoefficientMatrixBottom(
+void FitMeasure::ConstructCoefficientMatrix(
 	std::vector<std::vector<int>>& point_idx,
 	const Eigen::Matrix3Xd &vertices,
 	const Eigen::MatrixXd& one_measure,
 	const Eigen::MatrixXd& input_m)
 {
-	//std::vector<Tri> triplets;
 	num_verts = vertices.cols();
 	num_measure = point_idx.size();	//18
 	SaveEdge(point_idx);
 	num_edge_all = std::accumulate(edge.begin(), edge.end(), 0);	//所有边的数量1246
 	b_down.resize(num_edge_all, 3);
 	SetTriplets(vertices, input_m, point_idx, one_measure);
+	A.resize(num_verts + num_edge_all, num_verts);
+	A.setFromTriplets(triplets_A.begin(), triplets_A.end());
+	ShowMessage(string("Construct A"));
 }
 
 void FitMeasure::SetTriplets(
@@ -259,6 +528,8 @@ void FitMeasure::SetTriplets(
 			int _col1 = edge_1;
 			triplets_A.emplace_back(Tri(_row, _col0, -1));
 			triplets_A.emplace_back(Tri(_row, _col1, 1));
+			triplets_C.emplace_back(Tri(row + j, _col0, -1));
+			triplets_C.emplace_back(Tri(row + j, _col1, 1));
 			for (int k = 0; k < 3; ++k)
 			{
 				b_down.insert(row + j, k) = auxd[k];
@@ -318,6 +589,96 @@ void FitMeasure::ConstructB(
 	ShowMessage(string("FillB"));
 }
 
+
+void FitMeasure::SaveObj(
+	SurfaceMesh& mesh,
+	Eigen::SparseMatrix<double>& new_vertice)
+{
+	for (auto v : mesh.vertices())
+	{
+		Point& pos = mesh.position(v);
+		pos[0] = new_vertice.coeff(v.idx(), 0);
+		pos[1] = new_vertice.coeff(v.idx(), 1);
+		pos[2] = new_vertice.coeff(v.idx(), 2);
+	}
+	mesh.write((BIN_DATA_PATH + "res.obj").c_str());
+}
+void FitMeasure::SaveObj(
+	SurfaceMesh& mesh,
+	Eigen::MatrixX3d& new_vertice)
+{
+	for (auto v : mesh.vertices())
+	{
+		Point& pos = mesh.position(v);
+		pos[0] = new_vertice.coeff(v.idx(), 0);
+		pos[1] = new_vertice.coeff(v.idx(), 1);
+		pos[2] = new_vertice.coeff(v.idx(), 2);
+	}
+	mesh.write((BIN_DATA_PATH + "res.obj").c_str());
+}
+
+void FitMeasure::ShowMessage(const string& msg)
+{
+	std::cout << msg.c_str() << std::endl;
+}
+
+
+
+//将归一化的尺寸恢复为原来大小
+void FitMeasure::RecoverMeasure(Eigen::MatrixXd& measurelist, Eigen::MatrixXd& one_measure)
+{
+	Eigen::MatrixXd mean_measure, std_measure;
+	binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "mean_measure").c_str(), mean_measure);
+	binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "std_measure").c_str(), std_measure);
+	one_measure = one_measure.cwiseProduct(std_measure);
+	one_measure += mean_measure;
+}
+
+Eigen::MatrixX3d FitMeasure::AULSolver(
+	const Eigen::Matrix3Xd& vertices)
+{
+	Eigen::MatrixX3d res_vert; res_vert.resize(num_verts, 3);
+	for (int i = 0; i < 3; ++i)
+	{
+		Eigen::MatrixXd vertices_one = vertices.row(i);
+		b_col = i;
+		res_vert.col(i) = SolveOneDimension(vertices_one);
+	}
+	return res_vert;
+}
+Eigen::MatrixXd FitMeasure::SolveOneDimension(
+	Eigen::MatrixXd& vertices_one)
+{
+	vertices_one.resize(num_verts, 1);
+	auto CT = C.transpose();
+	Eigen::MatrixXd vertices_one_next = vertices_one;
+	Eigen::MatrixXd alpha;
+	alpha.resize(num_edge_all, 1); alpha.setConstant(0.1);
+	Eigen::MatrixXd alpha_next(alpha);
+	double beta = 1;
+	do
+	{
+		beta += 1;
+		vertices_one = vertices_one_next;
+		alpha = alpha_next;
+		vertices_one_next = vertices_one - delta * CalcGradient(vertices_one) + CT * alpha +
+			beta * CT*(C * vertices_one - b_down.col(b_col));
+		alpha_next = alpha + delta * (C * vertices_one_next - b_down.col(b_col));
+	} while (vertices_one.norm() - vertices_one_next.norm() < eps);
+	return vertices_one_next;
+}
+
+Eigen::SparseMatrix<double> FitMeasure::CalcGradient(
+	Eigen::MatrixXd& V0)
+{
+	Eigen::MatrixXd F_up = L * V0;
+	Eigen::MatrixXd F_down = C * V0;
+	auto LT = L.transpose();
+	auto CT = C.transpose();
+	Eigen::SparseMatrix<double> grad_fx = 2 * LT * (L * V0 - b_up.col(b_col) + b_up.col(b_col));
+	return grad_fx;
+}
+
 /*!
 *@brief  拟合尺寸
 *@param[out]
@@ -336,292 +697,19 @@ void FitMeasure::FitMeasurements(
 	const Eigen::MatrixXd& input_m)
 {
 	CaculateLaplacianCotMatrix(mesh);
-	ConstructCoefficientMatrixBottom(point_idx, vertices, one_measure, input_m);
-	ConstructCoefficientMatrix();
+	ConstructCoefficientMatrix(point_idx, vertices, one_measure, input_m);
+	ConstructCoefficientMatrixBottom();
 
 	Eigen::SparseMatrix<double> v(num_verts, 3);
 	Mat2Vec(v, vertices);
 
 	Eigen::SparseMatrix<double> b1 = L * v;
+	b_up = b1;
 	ShowMessage(string("b1 = L * v"));
 	ConstructB(b1, b_down);
-
-	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
-	auto AT = A.transpose();
-	ShowMessage(string("AT"));
-
-	Eigen::SparseMatrix<double> ATA = AT * A;
-	solver.compute(ATA);
-	ShowMessage(string("ATA"));
-
-	if (solver.info() != Eigen::Success)
-		ShowMessage(string(">Solve Failed"));
-
-	Eigen::SparseMatrix<double> new_vertice = solver.solve(AT * b);
-	ShowMessage(string(">Solve Success"));
+	Eigen::MatrixX3d new_vertice = AULSolver(vertices);
 	SaveObj(mesh, new_vertice);
-}
-
-void FitMeasure::SaveObj(
-	SurfaceMesh& mesh,
-	Eigen::SparseMatrix<double>& new_vertice)
-{
-	for (auto v : mesh.vertices())
-	{
-		Point& pos = mesh.position(v);
-		pos[0] = new_vertice.coeff(v.idx(), 0);
-		pos[1] = new_vertice.coeff(v.idx(), 1);
-		pos[2] = new_vertice.coeff(v.idx(), 2);
-	}
-	mesh.write((BIN_DATA_PATH + "res.obj").c_str());
-}
-
-void FitMeasure::ShowMessage(const string& msg)
-{
-	std::cout << msg.c_str() << std::endl;
-}
-
-void FitMeasure::ConstructCoefficientMatrix()
-{
-	A.resize(num_verts + num_edge_all, num_verts);
-	A.setFromTriplets(triplets_A.begin(), triplets_A.end());
-	ShowMessage(string("Construct A"));
-}
-
-//将归一化的尺寸恢复为原来大小
-void FitMeasure::RecoverMeasure(Eigen::MatrixXd& measurelist, Eigen::MatrixXd& one_measure)
-{
-	Eigen::MatrixXd mean_measure, std_measure;
-	binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "mean_measure").c_str(), mean_measure);
-	binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "std_measure").c_str(), std_measure);
-	one_measure = one_measure.cwiseProduct(std_measure);
-	one_measure += mean_measure;
-}
-
-void FitMeasure::CaculateLaplacianCotMatrix_Test(
-	SurfaceMesh& mesh,
-	Eigen::SparseMatrix<double>& L,
-	std::vector<Tri>& triplets,
-	Eigen::SparseMatrix<double>& b)
-{
-	//std::vector<Tri> triplets;
-	const int p_num = mesh.n_vertices();
-	//std::vector<int> fix{ 275,12478,21,2,3,12222,33,444,555,666,777,6663,4443};
-	//std::vector<int> mov{ 4986 }; //position[-0.316209 0.298498 - 0.088143]
-	std::vector<int> fix{ 1031 };
-	std::vector<int> mov{ 0 };
-	//vertex# 1031
-	//	position[0.997592 0.049009 0.000000]
-	//for (auto v : mesh.vertices())
-	//{
-	//	//圆柱体z坐标小于11固定
-	//	if (mesh.position(v)[2] < -0.8 || mesh.position(v)[2] > 0.6)
-	//	{
-	//		fix.push_back(v.idx());
-	//	}
-	//	//设置z坐标大于18为移动
-	//	//if (mesh.position(v)[2] >= 15)
-	//	//{
-	//	//	mov.push_back(v.idx());
-	//	//}
-	//}
-	int num_fix = fix.size();
-	int num_mov = mov.size();
-	auto fit = mesh.faces_begin();
-	triplets.reserve(20);
-	L.resize(p_num, p_num);
-	do
-	{
-		auto vf = mesh.vertices(*fit);
-		Point p[3];
-		double cot[3];
-		int id[3];
-		for (int i = 0; i < 3; ++i, ++vf)
-		{
-			p[i] = mesh.position(*vf);
-			id[i] = (*vf).idx();
-		}
-		for (int i = 0; i < 3; ++i)
-		{
-			int j = (i + 1) % 3, k = (j + 1) % 3;
-			cot[i] = dot(p[j] - p[i], p[k] - p[i]) / norm(cross(p[j] - p[i], p[k] - p[i]));
-
-			triplets.push_back({ id[j], id[k], -0.5 * cot[i] });
-			triplets.push_back({ id[k], id[j], -0.5 * cot[i] });
-		}
-		for (int i = 0; i < 3; ++i)
-		{
-			triplets.push_back({ id[i], id[i], 0.5*(cot[(i + 1) % 3] + cot[(i + 2) % 3]) });
-		}
-
-	} while (++fit != mesh.faces_end());
-	L.setFromTriplets(triplets.begin(), triplets.end());
-
-	for (int i = 0; i < num_fix; ++i)
-	{
-		triplets.emplace_back(Tri(p_num + i, fix[i], 1));
-	}
-
-	for (int i = 0; i < num_mov; ++i)
-	{
-		triplets.emplace_back(Tri(p_num + num_fix + i, mov[i], 1));
-	}
-	Eigen::SparseMatrix<double> v;
-	v.resize(p_num, 3);
-	std::vector<Tri> tri_v;
-	tri_v.reserve(3);
-	int i = 0;
-	for (const auto &v_it : mesh.vertices())
-	{
-		Point t = mesh.position(v_it);
-		tri_v.emplace_back(Tri(i, 0, t[0]));
-		tri_v.emplace_back(Tri(i, 1, t[1]));
-		tri_v.emplace_back(Tri(i, 2, t[2]));
-		i++;
-	}
-	v.setFromTriplets(tri_v.begin(), tri_v.end());
-	Eigen::SparseMatrix<double> A;
-	A.resize(p_num + num_fix + num_mov, p_num);
-	A.setFromTriplets(triplets.begin(), triplets.end());
-	b = L * v;
-	b.conservativeResize(p_num + num_fix + num_mov, 3);
-	for (int i = 0; i < num_fix; ++i)
-	{
-		for (int j = 0; j < 3; ++j)
-		{
-			b.insert(p_num + i, j) = v.coeff(fix[i], j);
-		}
-	}
-
-	//b(3 * p_num + 3 * num_fix + 0) = -0.55;
-	//b(3 * p_num + 3 * num_fix + 1) = 0.35;
-	//b(3 * p_num + 3 * num_fix + 2) = -0.088;
-	//for (int i = 0; i < num_mov; ++i)
-	//{
-	//	for (int j = 0; j < 3; ++j)
-	//	{
-	//		if (j == 2)
-	//			b.coeffRef(p_num + num_fix + i, j) = v.coeff(mov[i], j) + 5.0;
-	//		else
-	//			b.coeffRef(p_num + num_fix + i, j) = v.coeff(mov[i], j);
-	//	}
-	//}
-	b.insert(p_num + num_fix, 0) = v.coeff(mov[0], 0) - 15;
-	b.insert(p_num + num_fix, 1) = v.coeff(mov[0], 1);
-	b.insert(p_num + num_fix, 2) = v.coeff(mov[0], 2);
-	//std::cout << b << std::endl;
-	//position[-0.316209 0.298498 - 0.088143]
-
-	auto AT = A.transpose();
-	ShowMessage(string("AT"));
-
-	Eigen::SparseMatrix<double> ATA = AT * A;
-	Eigen::SimplicialCholesky<Eigen::SparseMatrix<double>> solver(ATA);
-	ShowMessage(string("ATA"));
-
-	if (solver.info() != Eigen::Success)
-		ShowMessage(string(">Solve Failed"));
-	//Eigen::Matrix3Xi facets;
-	//binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "facets").c_str(), facets);
-	Eigen::MatrixXd new_vertice(p_num, 3);
-	new_vertice = solver.solve(AT*b);
-	//new_vertice.col(1) = solver.solve(AT*b.col(1));
-	//new_vertice.col(2) = solver.solve(AT*b.col(2));
-	ShowMessage(string(">Solve Success"));
-
-	//meshio::SaveObj((BIN_DATA_PATH + "res.obj").c_str(), res_verts, facets);
-
-	for (auto v : mesh.vertices())
-	{
-		Point& pos = mesh.position(v);
-		pos[0] = new_vertice.coeff(v.idx(), 0);
-		pos[1] = new_vertice.coeff(v.idx(), 1);
-		pos[2] = new_vertice.coeff(v.idx(), 2);
-	}
-	mesh.write((BIN_DATA_PATH + "res.obj").c_str());
-}
-
-void FitMeasure::ConstructCoefficientMatrixBottom_Test(
-	SurfaceMesh& mesh,
-	std::vector<std::vector<int>>& point_idx,
-	const Eigen::MatrixXd& measurements,
-	Eigen::SparseMatrix<double>& b,
-	const Eigen::MatrixXd& input_m,
-	std::vector<Tri>& triplets)
-{
-	vector<Point> Vertice;
-	for (const auto &v_it : mesh.vertices())
-	{
-		Point t = mesh.position(v_it);
-		Vertice.push_back(t);
-	}
-	num_edge_all = 3;
-	vector<int> point_idx_t{ 12478, 275 };
-	vector<int> fix{ 10941, 11120 };
-	//std::vector<Tri> triplets;
-	num_verts = mesh.n_vertices();
-	b.resize(3, 3);
-	triplets.reserve(7);
-	int row = 0;
-	//遍历每个尺寸的每条边
-	for (int j = 0; j < 1; ++j)
-	{
-		int edge_0 = point_idx_t[0];
-		int edge_1 = point_idx_t[1];
-		const Eigen::Vector3d v0 = Vertice[edge_0];
-		const Eigen::Vector3d v1 = Vertice[edge_1];
-		const Eigen::Vector3d edge_01 = v1 - v0;
-		const double edge_len = edge_01.norm();
-		double target_len = 1.8;
-		//std::cout << edge_len << std::endl;
-		Eigen::Vector3d auxd = (edge_01 / edge_len) * target_len;
-
-		int _row = num_verts + j;
-		int _col0 = edge_0;
-		int _col1 = edge_1;
-		triplets.emplace_back(Tri(_row, _col0, -1));
-		triplets.emplace_back(Tri(_row, _col1, 1));
-		for (int k = 0; k < 3; ++k)
-		{
-			b.insert(j, k) = auxd[k];
-		}
-		//std::cout << "row: " << row + j * 3 + k << " " << "col: " << edge_0 * 3 + k << " " << auxd[k] << std::endl;
-	}
-
-	for (int i = 0; i < fix.size(); ++i)
-	{
-		triplets.emplace_back(Tri(num_verts + i, fix[i], 1));
-	}
-
-	for (int i = 0; i < fix.size(); ++i)
-	{
-		for (int j = 0; j < 3; ++j)
-		{
-
-			//b.insert(1 + i, j) = vertices.coeff(j, fix[i]);
-		}
-	}
-}
-
-void FitMeasure::FitMeasurements_Test(
-	SurfaceMesh& mesh,
-	Eigen::Matrix3Xd& res_verts,
-	const Eigen::SparseMatrix<double>& L,
-	const Eigen::Matrix3Xd& vertices,
-	Eigen::SparseMatrix<double> & b2,
-	std::vector<std::vector<int>>& point_idx,
-	Eigen::SparseMatrix<double> A)
-{
-	Eigen::SparseMatrix<double> v(num_verts, 3);
-	Mat2Vec(v, vertices);
-
-	Eigen::SparseMatrix<double> b1 = L * v;
-	ShowMessage(string("b1 = L * v"));
-
-	Eigen::SparseMatrix<double> b(num_verts + num_edge_all, 3);
-	//ConstructB(b, b1, b2);
-
-	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
+	/*Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
 	auto AT = A.transpose();
 	ShowMessage(string("AT"));
 
@@ -634,25 +722,5 @@ void FitMeasure::FitMeasurements_Test(
 
 	Eigen::SparseMatrix<double> new_vertice = solver.solve(AT * b);
 	ShowMessage(string(">Solve Success"));
-	//res_verts = Eigen::Map<Eigen::Matrix3Xd>(vecV.data(), vertices.cols(), 3);
-	for (auto v : mesh.vertices())
-	{
-		Point& pos = mesh.position(v);
-		pos[0] = new_vertice.coeff(v.idx(), 0);
-		pos[1] = new_vertice.coeff(v.idx(), 1);
-		pos[2] = new_vertice.coeff(v.idx(), 2);
-	}
-	mesh.write((BIN_DATA_PATH + "res.obj").c_str());
-}
-void FitMeasure::Mat2Vec_Test(
-	Eigen::SparseMatrix<double>& v,
-	const std::vector<Point>& Vertice)
-{
-	for (int i = 0; i < num_verts; ++i)
-	{
-		for (int j = 0; j < 3; ++j)
-		{
-			v.coeffRef(i, j) = Vertice[i][0];
-		}
-	}
+	SaveObj(mesh, new_vertice);*/
 }
