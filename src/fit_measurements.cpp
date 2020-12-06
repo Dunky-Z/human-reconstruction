@@ -646,24 +646,21 @@ Eigen::MatrixX3d FitMeasure::AULSolver(
 	}
 	return res_vert;
 }
+
 Eigen::MatrixXd FitMeasure::SolveOneDimension(
 	Eigen::MatrixXd& vertices_one)
 {
 	vertices_one.resize(num_verts, 1);
 	auto CT = C.transpose();
 	Eigen::MatrixXd vertices_one_next = vertices_one;
-	Eigen::MatrixXd alpha;
-	alpha.resize(num_edge_all, 1); alpha.setConstant(0.1);
 	Eigen::MatrixXd alpha_next(alpha);
-	double beta = 1;
+	alpha.resize(num_edge_all, 1); alpha.setConstant(0.1);
+
 	do
 	{
-		beta += 1;
-		vertices_one = vertices_one_next;
 		alpha = alpha_next;
-		vertices_one_next = vertices_one - delta * CalcGradient(vertices_one) + CT * alpha +
-			beta * CT*(C * vertices_one - b_down.col(b_col));
-		alpha_next = alpha + delta * (C * vertices_one_next - b_down.col(b_col));
+		vertices_one_next = LBFGS(vertices_one);
+		alpha_next = alpha + beta * (C * vertices_one_next - b_down.col(b_col));
 	} while (vertices_one.norm() - vertices_one_next.norm() < eps);
 	return vertices_one_next;
 }
@@ -678,6 +675,99 @@ Eigen::SparseMatrix<double> FitMeasure::CalcGradient(
 	Eigen::SparseMatrix<double> grad_fx = 2 * LT * (L * V0 - b_up.col(b_col) + b_up.col(b_col));
 	return grad_fx;
 }
+
+void FitMeasure::SetGrad(Eigen::MatrixXd& grad_t, real_1d_array& grad)
+{
+	for (int i = 0; i < grad_t.size(); ++i)
+	{
+		grad[i] = grad_t.coeff(i, 0);
+	}
+}
+
+Eigen::MatrixXd FitMeasure::LBFGS(Eigen::MatrixXd& vertices_one)
+{
+	alglib::real_1d_array x;
+	x.attach_to_ptr(num_verts, vertices_one.data());
+	Eigen::VectorXd scale;
+	scale.resize(num_verts);
+	scale.setOnes();
+	real_1d_array s;
+	s.setcontent(num_verts, scale.data());
+
+	double epsg = 0;
+	double epsf = 0;
+	double epsx = 1e-8;
+	ae_int_t maxits = 0;
+	minlbfgsstate state;
+	minlbfgscreate(1, x, state);
+	minlbfgssetcond(state, epsg, epsf, epsx, maxits);
+	minlbfgssetscale(state, s);
+
+
+	minlbfgsoptguardsmoothness(state);
+	minlbfgsoptguardgradient(state, 0.001);
+	minlbfgsreport rep;
+
+	alglib::minlbfgsoptimize(state, function1_grad);
+	minlbfgsresults(state, x, rep);
+
+	Eigen::MatrixXd res;
+	array2mat(x, res);
+
+	return res;
+
+	//
+	// Check that OptGuard did not report errors
+	//
+	// NOTE: want to test OptGuard? Try breaking the gradient - say, add
+	//       1.0 to some of its components.
+	//
+	optguardreport ogrep;
+	minlbfgsoptguardresults(state, ogrep);
+	printf("%s\n", ogrep.badgradsuspected ? "true" : "false"); // EXPECTED: false
+	printf("%s\n", ogrep.nonc0suspected ? "true" : "false"); // EXPECTED: false
+	printf("%s\n", ogrep.nonc1suspected ? "true" : "false"); // EXPECTED: false
+}
+
+void FitMeasure::array2mat(real_1d_array& x, Eigen::MatrixXd& res)
+{
+	res.resize(num_verts, 1);
+	for (int i = 0; i < num_verts; ++i)
+	{
+		res.coeffRef(i, 0) = x[i];
+	}
+}
+
+void function1_grad(const real_1d_array &x, double &func, real_1d_array &grad, void *ptr)
+{
+	FitMeasure fit;
+	int num_verts = fit.num_verts;
+	int num_edge_all = fit.num_edge_all;
+	alglib::real_1d_array temp(x);
+	Eigen::MatrixXd V0 = Eigen::Map<Eigen::MatrixXd>(temp.getcontent(), num_verts, 1);
+	Eigen::MatrixXd F_up = fit.L * V0;
+	Eigen::MatrixXd F_down = fit.C * V0;
+	auto CT = fit.C.transpose();
+	Eigen::MatrixXd alpha = fit.alpha;
+	alpha.resize(num_edge_all, 1); alpha.setConstant(0.1);
+	double beta = fit.beta;
+
+	for (int i = 0; i < num_verts; ++i)
+	{
+		auto t = F_up.coeff(i, 0) - fit.b_up.coeff(i, fit.b_col);
+		func += t;
+	}
+	for (int i = 1; i <= num_edge_all; ++i)
+	{
+		auto t = F_down.coeff(i - 1, 0) - fit.b_down.coeff(i - 1, fit.b_col);
+		func += t;
+	}
+
+	Eigen::MatrixXd grad_t = fit.CalcGradient(V0) + CT * alpha +
+		beta * CT*(fit.C * V0 - fit.b_down.col(fit.b_col));
+	fit.SetGrad(grad_t, grad);
+}
+
 
 /*!
 *@brief  ÄâºÏ³ß´ç

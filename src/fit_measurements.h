@@ -109,6 +109,14 @@ public:
 		Eigen::MatrixXd& vertices_one);
 	Eigen::MatrixX3d FitMeasure::AULSolver(
 		const Eigen::Matrix3Xd& vertices);
+	void SetGrad(Eigen::MatrixXd& grad_t, real_1d_array &grad);
+	Eigen::MatrixXd FitMeasure::LBFGS(
+		Eigen::MatrixXd& vertices_one);
+	void FitMeasure::array2mat(
+		real_1d_array& x, 
+		Eigen::MatrixXd& res);
+
+	friend void function1_grad(const real_1d_array &x, double &func, real_1d_array &grad, void *ptr);
 
 protected:
 private:
@@ -120,6 +128,8 @@ private:
 	int num_measure;
 	int num_edge_all;
 	int num_verts;
+	double beta = 1;
+	Eigen::MatrixXd alpha;
 	std::vector<Tri> triplets_A;
 	std::vector<Tri> triplets_C;
 	std::vector<int> edge;//size = 18
