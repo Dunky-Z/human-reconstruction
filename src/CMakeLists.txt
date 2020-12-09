@@ -15,8 +15,12 @@ include_directories("D:/Lib/pmp-library-debug/include")
 
 #find_package(GLFW REQUIRED)
 FILE(GLOB SC_FILES "*.cpp" "*.h")
+FILE(GLOB ALGLIB_FILES "../alglib/cpp/src/*.cpp" "../alglib/cpp/src/*.h")
 
-add_executable(${PROJECT_NAME} ${SC_FILES})
+source_group(alglib FILES ${ALGLIB_FILES})
+
+add_executable(${PROJECT_NAME} ${SC_FILES} ${ALGLIB_FILES})
+
 target_link_libraries(human-reconstruction debug "D:/Lib/pmp-library-debug/lib/pmp.lib")
 target_link_libraries(human-reconstruction optimized "D:/Lib/pmp-library-release/lib/pmp.lib")
 target_link_libraries(${PROJECT_NAME} Eigen3::Eigen)

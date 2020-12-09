@@ -93,7 +93,7 @@ $$y = \sigma x + \mu$$
 我求平均误差的方式是，给定一个模型的原始尺寸。随机丢掉1-18个尺寸，然后用剩余尺寸预测。重复进行100次，然后取平均误差。Song原文里也没说是如何去平均误差的。如果只人为固定丢掉的尺寸，比如身高或者腰围这些尺寸较大的数据，误差就会降低很多。
 
 #### 算法概述
-测量的数据分为三类，欧式距离值，测地距离值和围长值，对于每个待求的网格$X_i$，在网格上对应的求出的数据尽量和真实值保持一致，这就是一个最小化能量函数的问题 。对于欧式距离，给定目标长度$l_t(d)$，表示线段$d$两个端点$v_i$,$v_j$的欧式距离。能量函数可以定义为：
+对于欧式距离，给定目标长度$l_t(d)$，表示线段$d$两个端点$v_i$,$v_j$的欧式距离。能量函数可以定义为：
 
 $$
 E_{\mathcal{D}} = \sum_{d \in \mathcal{D}}\left(\|v_i - v_j \|^{2}-l_{t}(d)^{2}\right)^{2}
@@ -112,8 +112,6 @@ $$
 $$
 E =  \sum\left\|L\mathbf{V}' -  L\mathbf{V} \right\|^{2}+
 \sum_{d \in \mathcal{D}}\left(\|v_i - v_j \|^{2}-l_{t}(d)^{2}\right)^{2}
-+
- \sum_{e \in \mathcal{P}}\left(\|v_k - v_l \|^{2}-l_{t}(e)^{2}\right)^{2}
 $$
 
 其中$\mathcal{D},\mathcal{P}$分别为欧式距离边集合，测地距离边集合。 $V$为原模型顶点坐标，$V'$为目标模型顶点坐标。假定变形前后长度比例不变，可以通过下式算出逼近的长度：
@@ -141,16 +139,14 @@ $$
 因此当$\mathbf{d}=l_t{d}(\mathbf{v}_{ij}/\|\mathbf{v}_{ij}\|)$时，方程左右都有相同的极小值。因此重写能量函数为：
 
 $$
-E_{\mathcal{D}} = \sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}\|
+E_{\mathcal{D}} = \sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}\|^2
 $$
 
 同理可以改写测地距离的能量函数，最终能量函数函数为：
 
 $$
 E =  \sum\left\|L\mathbf{V}' -  L\mathbf{V} \right\|^{2}+
-\sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}_d\|
-+
-\sum_{e \in \mathcal{P}}\|  (v_{k} - v_{l}) - \mathbf{d}_e\|
+\sum_{d \in \mathcal{D}}\|  (v_{i} - v_{j}) - \mathbf{d}_d\|^2
 $$
 
 改写为矩阵形式为：
@@ -159,12 +155,10 @@ $$
 \left[\begin{array}{c}
 L\\
 C_1 \\
-C_2
 \end{array}\right] V
 =\left[\begin{array}{c}
 \Delta\\
 \mathbf{d}_d \\
-\mathbf{d}_e
 \end{array}\right]
 $$
 
@@ -175,14 +169,113 @@ $$
 A = \left[\begin{array}{c}
 L\\
 C_1 \\
-C_2
 \end{array}\right],
 b=\left[\begin{array}{c}
 \Delta\\
 \mathbf{d}_d \\
-\mathbf{d}_e
 \end{array}\right]
 $$
 
-A大小为：$(3|V| + 3|M|) \times (3|V|)$，V大小为$3|V|\times 1$，b大小为：$(3|V| + 3|M|) \times 1$。$|M|$为尺寸相关的所有边的个数。
-在分解矩阵$A^TA$时，内存爆了，占用高达20G，无法分解计算。
+#### 增广拉格朗日乘子法
+对于一个标准问题
+
+$$
+\min f(x)
+$$
+
+$$
+\text{s.t.} Ax=b
+$$
+
+拉格朗日函数为
+$$
+\mathcal{L}(x,\alpha)=f(x) + \alpha^T(Ax- b)
+$$增广拉格朗日函数为
+$$
+\mathcal{L}(x,\alpha,\beta)=f(x) + \alpha^T(Ax- b) + \frac{\beta}{2}\|Ax-b\|^2_2 
+$$
+
+迭代算法
+$$
+\left\{\begin{array}{l}
+x^{k+1}=\arg \min _{x} \mathcal{L}_{c}\left(x, \alpha^{k}\right)\\
+\alpha^{k+1}=\alpha^{k}+\beta\left(A x^{k+1}-b\right)
+\end{array}\right.
+$$
+
+对于本问题
+$$
+\begin{array}{c}
+f(V') = \sum\left\|L\mathbf{V}' -  L\mathbf{V} \right\|^{2}\\
+s.t. \quad CV' = \mathbf{d}
+\end{array}
+$$
+
+拉格朗日函数为：
+$$
+\mathcal{L}(\mathbf{V}',\alpha)=f(\mathbf{V}') + \alpha^T(C\mathbf{V}'- \mathbf{d})
+$$增广拉格朗日函数为
+$$
+\mathcal{L}(\mathbf{V}',\alpha,\beta)=f(\mathbf{V}') + \alpha^T(C\mathbf{V}'- \mathbf{d}) + \frac{\beta}{2}\|C\mathbf{V}'- \mathbf{d}\|^2
+$$
+求解：
+回顾拉格朗日法：
+$$
+\left\{\begin{array}{l}
+\mathbf{V'}^{k+1}= \mathbf{V'}^{k} - \delta^k\nabla\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) = \mathbf{V'}^{k} - \delta^k(\nabla f(\mathbf{V'}^{k}) + C^{T}\alpha^{k})\\
+\alpha^{k+1}=\alpha^{k}+\delta^{k}\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) =\alpha^{k} + \delta^{k}(C\mathbf{V'}^{k}-\mathbf{d})
+\end{array}\right.
+$$
+
+替换成增广拉格朗日函数的梯度后：
+$$
+\left\{\begin{array}{l}
+\alpha^{k+1}=\alpha^{k}+\delta^{k}\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) =\alpha^{k} + \delta^{k}(C\mathbf{V'}^{k}-\mathbf{d})
+\end{array}\right.
+$$
+但是上式有个东西没有利用起来，就是第一个迭代公式计算出来的$\mathbf{V'}^{k+1}$,在第二个式子计算$\alpha^{k+1}$时还在用$x^{k}$，我们可以将其替换为新的$\mathbf{V'}^{k+1}$:
+$$
+\left\{\begin{array}{l}
+\mathbf{V'}^{k+1}= \mathbf{V'}^{k} - \delta^k\nabla\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) = \mathbf{V'}^{k} - \delta^k(\nabla f(\mathbf{V'}^{k}) + C^{T}\alpha^{k} + \beta C^{T}(C\mathbf{V'}^{k}-\mathbf{d}))\\
+\alpha^{k+1}=\alpha^{k}+\delta^{k}\mathcal{L}(\mathbf{V'}^{k+1},\alpha^{k}) =\alpha^{k} + \delta^{k}(C\mathbf{V'}^{k+1}-\mathbf{d})
+\end{array}\right.
+$$
+上式采用梯度下降的方法更新$V'$，如果增广拉格朗日函数容易优化，也可以采取其他方法，所以将优化过程简写$\arg \min _{V'} \mathcal{L}_{c}\left(\mathbf{V}', \alpha^{k}\right)$此外，增广拉格朗日函数里面的罚参数$\beta$还没利用到。为了让罚参数起作用，我们还可以把第二个式子的步长替换为罚参数:：
+$$
+\left\{\begin{array}{l}
+\mathbf{V'}^{k+1}=\arg \min _{V'} \mathcal{L}_{c}\left(\mathbf{V}', \alpha^{k}\right)\\
+\alpha^{k+1}=\alpha^{k}+\beta\left(C\mathbf{V'}^{k+1}-\mathbf{d}\right)
+\end{array}\right.
+$$
+
+
+#### Alglib-minnlc求解器
+
+- 目标函数 
+每次只求解一个维度，假设只求解$x$坐标：
+$$
+f(V_{x}) = \sum\left\|L\mathbf{V}'_{x} -  L\mathbf{V}_{x} \right\|^{2}
+$$
+
+- 约束条件
+$$
+\begin{array}{c}
+\|  \vec{v}_{1x} - \mathbf{d}_{1x}\|^2 = 0 \\
+\|  \vec{v}_{2x} - \mathbf{d}_{2x}\|^2 = 0 \\
+\vdots\\
+\|  \vec{v}_{nx} - \mathbf{d}_{nx}\|^2 = 0 \\
+\end{array}
+$$其中$\vec{v} = v_i - v_j$,$n$为测量尺寸所涉及的边的个数
+矩阵形式：
+$$
+\|C_t\mathbf{V}'_{x}-\mathbf{d}_{tx}\|^2=0,t\in[1,2,3,\dots,n]
+$$
+- 目标函数Jacobian矩阵
+$$
+J_f(X_{i}) = 2L^T(LX - \Delta)
+$$
+- 约束条件Jacobian矩阵
+$$
+J_f(X_{i}) = 2C^T(CX - \mathbf{d}_{x})
+$$其中$X:V_x,\Delta = L\mathbf{V}_{x}$
+
