@@ -176,9 +176,6 @@ b=\left[\begin{array}{c}
 \end{array}\right]
 $$
 
-A大小为：$(3|V| + 3|M|) \times (3|V|)$，V大小为$3|V|\times 1$，b大小为：$(3|V| + 3|M|) \times 1$。$|M|$为尺寸相关的所有边的个数。
-
-
 #### 增广拉格朗日乘子法
 对于一个标准问题
 
@@ -233,7 +230,6 @@ $$
 替换成增广拉格朗日函数的梯度后：
 $$
 \left\{\begin{array}{l}
-\mathbf{V'}^{k+1}= \mathbf{V'}^{k} - \delta^k\nabla\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) = \mathbf{V'}^{k} - \delta^k(\nabla f(\mathbf{V'}^{k}) + C^{T}\alpha^{k} + \beta C^{T}(C\mathbf{V'}^{k}-\mathbf{d}))\\
 \alpha^{k+1}=\alpha^{k}+\delta^{k}\mathcal{L}( \mathbf{V'}^{k},\alpha^{k}) =\alpha^{k} + \delta^{k}(C\mathbf{V'}^{k}-\mathbf{d})
 \end{array}\right.
 $$
@@ -244,13 +240,14 @@ $$
 \alpha^{k+1}=\alpha^{k}+\delta^{k}\mathcal{L}(\mathbf{V'}^{k+1},\alpha^{k}) =\alpha^{k} + \delta^{k}(C\mathbf{V'}^{k+1}-\mathbf{d})
 \end{array}\right.
 $$
-此外，增广拉格朗日函数里面的罚参数$\beta$还没利用到。为了让罚参数起作用，我们还可以把第二个式子的步长替换为罚参数:：
+上式采用梯度下降的方法更新$V'$，如果增广拉格朗日函数容易优化，也可以采取其他方法，所以将优化过程简写$\arg \min _{V'} \mathcal{L}_{c}\left(\mathbf{V}', \alpha^{k}\right)$此外，增广拉格朗日函数里面的罚参数$\beta$还没利用到。为了让罚参数起作用，我们还可以把第二个式子的步长替换为罚参数:：
 $$
 \left\{\begin{array}{l}
 \mathbf{V'}^{k+1}=\arg \min _{V'} \mathcal{L}_{c}\left(\mathbf{V}', \alpha^{k}\right)\\
 \alpha^{k+1}=\alpha^{k}+\beta\left(C\mathbf{V'}^{k+1}-\mathbf{d}\right)
 \end{array}\right.
 $$
+
 
 #### Alglib-minnlc求解器
 

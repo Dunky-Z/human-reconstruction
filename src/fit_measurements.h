@@ -112,6 +112,10 @@ public:
 	void SetGrad(Eigen::MatrixXd& grad_t, real_1d_array &grad);
 	Eigen::MatrixXd FitMeasure::LBFGS(
 		Eigen::MatrixXd& vertices_one);
+	void FitMeasure::ErrorAnalysis(
+		Measure	measure,
+		std::vector<std::vector<std::vector<double>>>& control_points,
+		Eigen::MatrixXd input_m);
 	void FitMeasure::array2mat(
 		real_1d_array& x, 
 		Eigen::MatrixXd& res);

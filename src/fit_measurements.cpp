@@ -769,6 +769,34 @@ void function1_grad(const real_1d_array &x, double &func, real_1d_array &grad, v
 }
 
 
+void FitMeasure::ErrorAnalysis(
+	Measure	measure,
+	std::vector<std::vector<std::vector<double>>>& control_points,
+	Eigen::MatrixXd input_m)
+{
+	Eigen::Matrix3Xd vertex_1;
+	Eigen::Matrix3Xd vertex_2;
+	Eigen::Matrix3Xi facets;
+	binaryio::ReadMatrixBinaryFromFile((BIN_DATA_PATH + "facets").c_str(), facets);
+	meshio::ReadObj((DATASET_PATH + "R3.obj").c_str(), vertex_1, facets);
+	meshio::ReadObj((BIN_DATA_PATH + "res.obj").c_str(), vertex_2, facets);
+
+	Eigen::MatrixXd measure_1;
+	Eigen::MatrixXd measure_2;
+	Eigen::MatrixXd error;
+	measure_1.resize(19, 1);
+	measure_2.resize(19, 1);
+	measure_1 = measure.CalcMeasure(control_points, vertex_1, facets);
+	measure_2 = measure.CalcMeasure(control_points, vertex_2, facets);
+	std::cout << setprecision(15);
+	error = input_m - measure_2.middleRows(1, 18);
+	cout << std::fixed << input_m << endl;
+	cout << "-----------" << endl;
+	cout << std::fixed << measure_2 << endl;
+	cout << "-----------" << endl;
+	cout << std::fixed << error << endl;
+}
+
 /*!
 *@brief  ÄâºÏ³ß´ç
 *@param[out]
@@ -797,9 +825,9 @@ void FitMeasure::FitMeasurements(
 	b_up = b1;
 	ShowMessage(string("b1 = L * v"));
 	ConstructB(b1, b_down);
-	Eigen::MatrixX3d new_vertice = AULSolver(vertices);
-	SaveObj(mesh, new_vertice);
-	/*Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
+	//Eigen::MatrixX3d new_vertice = AULSolver(vertices);
+	//SaveObj(mesh, new_vertice);
+	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
 	auto AT = A.transpose();
 	ShowMessage(string("AT"));
 
@@ -812,5 +840,6 @@ void FitMeasure::FitMeasurements(
 
 	Eigen::SparseMatrix<double> new_vertice = solver.solve(AT * b);
 	ShowMessage(string(">Solve Success"));
-	SaveObj(mesh, new_vertice);*/
+	SaveObj(mesh, new_vertice);
+
 }

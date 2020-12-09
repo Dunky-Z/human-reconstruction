@@ -63,34 +63,39 @@ float CalcTargetLen(
 	const int& index,
 	const Eigen::MatrixXd& input_m);
 void CaculateLaplacianCotMatrix(
-	const SurfaceMesh& mesh);
+	SurfaceMesh& mesh,
+	std::vector<Tri>& triplets_A);
 void ConstructCoefficientMatrix(
 	std::vector<std::vector<int>>& point_idx,
-	const Eigen::Matrix3Xd& vertices,
+	Eigen::Matrix3Xd& vertices,
 	const Eigen::MatrixXd& measurements,
-	const Eigen::MatrixXd& input_m);
+	const Eigen::MatrixXd& input_m,
+	std::vector<Tri>& triplets_A,
+	std::vector<Tri>& triplets_C);
 void FitMeasurements(
 	SurfaceMesh& mesh,
-	const Eigen::Matrix3Xd& vertices,
-	const Eigen::MatrixXd& measurements,
-	std::vector<std::vector<int>>& point_idx,
-	const Eigen::MatrixXd& input_m);
+	Eigen::Matrix3Xd& vertices);
 void SaveEdge(std::vector<std::vector<int>>& point_idx);
 void SetTriplets(
 	vec3 p[3],
-	int id[3]);
+	int id[3],
+	std::vector<Tri>& triplets_A);
 void SetTriplets(
-	const Eigen::Matrix3Xd& vertices,
+	Eigen::Matrix3Xd& vertices,
 	const Eigen::MatrixXd& input_m,
 	const std::vector<std::vector<int>>& point_idx,
-	const Eigen::MatrixXd& measurements);
+	const Eigen::MatrixXd& measurements,
+	std::vector<Tri>& triplets_A,
+	std::vector<Tri>& triplets_C);
 void Mat2Vec(Eigen::SparseMatrix<double>& v,
-	const Eigen::Matrix3Xd& vertices);
+	Eigen::Matrix3Xd& vertices);
 void ConstructB(
 	Eigen::SparseMatrix<double>& b1,
 	Eigen::SparseMatrix<double>& b2);
-void ShowMessage(const string& msg);
-void ConstructCoefficientMatrixBottom();
+void ShowMessage(
+	const string& msg);
+void ConstructCoefficientMatrixBottom(
+	std::vector<Tri>& triplets_C);
 void RecoverMeasure(
 	Eigen::MatrixXd& measurelist,
 	Eigen::MatrixXd& one_measure);
@@ -105,12 +110,33 @@ Eigen::SparseMatrix<double> CalcGradient(
 Eigen::MatrixXd SolveOneDimension(
 	Eigen::MatrixXd& vertices_one);
 Eigen::MatrixX3d AULSolver(
-	const Eigen::Matrix3Xd& vertices);
-void SetGrad(Eigen::MatrixXd& grad_t, real_1d_array &grad);
+	Eigen::Matrix3Xd& vertices);
+void SetGrad(
+	Eigen::MatrixXd& grad_t,
+	real_1d_array &grad);
 Eigen::MatrixXd LBFGS(
-	Eigen::MatrixXd& vertices_one);
+	SurfaceMesh& mesh,
+	Eigen::Matrix3Xd& vertices,
+	std::vector<Tri>& triplets_A,
+	std::vector<Tri>& triplets_C);
 void array2mat(
 	real_1d_array& x,
 	Eigen::MatrixXd& res);
+Eigen::Matrix3Xd LeastSquare(
+	SurfaceMesh& mesh,
+	Eigen::Matrix3Xd& vertices,
+	std::vector<Tri>& triplets_A,
+	std::vector<Tri>& triplets_C);
+Eigen::MatrixXd Solver(
+	SurfaceMesh& mesh,
+	Eigen::Matrix3Xd& vertices);
+void SaveObj(
+	SurfaceMesh& mesh,
+	Eigen::Matrix3Xd& new_vertice);
 
+void Mat2Array(
+	Eigen::Matrix3Xd& vertices,
+	Eigen::MatrixXd& vertices_t);
+double func_x(
+	Eigen::MatrixXd& Vp);
 void function1_grad(const real_1d_array &x, double &func, real_1d_array &grad, void *ptr);
