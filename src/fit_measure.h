@@ -105,8 +105,13 @@ void SaveObj(
 void SaveObj(
 	SurfaceMesh& mesh,
 	Eigen::MatrixX3d& new_vertice);
+void SaveObj(
+	SurfaceMesh& mesh,
+	Eigen::Matrix3Xd& new_vertice);
 Eigen::SparseMatrix<double> CalcGradient(
-	Eigen::MatrixXd& V0);
+	Eigen::MatrixXd& V0,
+	Eigen::SparseMatrix<double>& LL,
+	Eigen::SparseMatrix<double>& bb);
 Eigen::MatrixXd SolveOneDimension(
 	Eigen::MatrixXd& vertices_one);
 Eigen::MatrixX3d AULSolver(
@@ -122,6 +127,9 @@ Eigen::MatrixXd LBFGS(
 void array2mat(
 	real_1d_array& x,
 	Eigen::MatrixXd& res);
+void array2mat(
+	real_1d_array& x,
+	Eigen::Matrix3Xd& res);
 Eigen::Matrix3Xd LeastSquare(
 	SurfaceMesh& mesh,
 	Eigen::Matrix3Xd& vertices,
@@ -130,13 +138,16 @@ Eigen::Matrix3Xd LeastSquare(
 Eigen::MatrixXd Solver(
 	SurfaceMesh& mesh,
 	Eigen::Matrix3Xd& vertices);
-void SaveObj(
-	SurfaceMesh& mesh,
-	Eigen::Matrix3Xd& new_vertice);
 
 void Mat2Array(
 	Eigen::Matrix3Xd& vertices,
 	Eigen::MatrixXd& vertices_t);
 double func_x(
-	Eigen::MatrixXd& Vp);
+	Eigen::SparseMatrix<double>& LL,
+	Eigen::MatrixXd& Vp,
+	Eigen::SparseMatrix<double>& bb);
+Eigen::MatrixXd Mat2Array(
+	Eigen::MatrixXd& v);
+Eigen::MatrixXd Mat2Array(
+	Eigen::SparseMatrix<double>& v);
 void function1_grad(const real_1d_array &x, double &func, real_1d_array &grad, void *ptr);

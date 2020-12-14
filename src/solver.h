@@ -62,7 +62,7 @@ void ConstructB(
 void Mat2Vec(
 	Eigen::SparseMatrix<double>& v,
 	const Eigen::Matrix3Xd& vertices);
-void  nlcfunc1_jac(
+void  nlcfunc1_jac (
 	const real_1d_array &x,
 	real_1d_array &fi,
 	real_2d_array &jac, 

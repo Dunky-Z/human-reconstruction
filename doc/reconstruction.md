@@ -202,7 +202,7 @@ x^{k+1}=\arg \min _{x} \mathcal{L}_{c}\left(x, \alpha^{k}\right)\\
 \alpha^{k+1}=\alpha^{k}+\beta\left(A x^{k+1}-b\right)
 \end{array}\right.
 $$
-
+ 
 对于本问题
 $$
 \begin{array}{c}
