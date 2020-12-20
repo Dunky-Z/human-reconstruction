@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include "../alglib/cpp/src/optimization.h"
 #include "utils.h"
+#include "mesh_io.h"
 #include "measure.h"
 #include "reshaper.h"
 
