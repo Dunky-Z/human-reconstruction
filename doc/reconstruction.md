@@ -278,4 +278,3 @@ $$
 $$
 J_f(X_{i}) = 2C^T(CX - \mathbf{d}_{x})
 $$其中$X:V_x,\Delta = L\mathbf{V}_{x}$
-
