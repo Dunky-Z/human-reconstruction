@@ -33,6 +33,7 @@ class CamShow(QMainWindow,Ui_HumanEstimate):
         super(CamShow,self).__init__(parent)
         self.setupUi(self)
 
+
 if __name__ == '__main__':
  app = QApplication(sys.argv)
  maya = Demo()

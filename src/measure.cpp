@@ -80,7 +80,8 @@ Measure::~Measure() { }
 *@param[in]  const Eigen::MatrixXd & x
 *@param[in]  const double average
 *@return     double
-*/double Measure::CalcVariance(const Eigen::MatrixXd &x, const double average)
+*/
+double Measure::CalcVariance(const Eigen::MatrixXd &x, const double average)
 {
 	double sum = 0.0;
 	int len = x.cols();

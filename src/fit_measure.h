@@ -15,7 +15,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../alglib/cpp/src/optimization.h"
+#include "../alglib/cpp/src/optimization.h" 
 #include "utils.h"
 #include "mesh_io.h"
 #include "measure.h"
@@ -121,6 +121,11 @@ void SetGrad(
 	Eigen::MatrixXd& grad_t,
 	real_1d_array &grad);
 Eigen::MatrixXd LBFGS(
+	SurfaceMesh& mesh,
+	Eigen::Matrix3Xd& vertices,
+	std::vector<Tri>& triplets_A,
+	std::vector<Tri>& triplets_C);
+Eigen::MatrixXd CG(
 	SurfaceMesh& mesh,
 	Eigen::Matrix3Xd& vertices,
 	std::vector<Tri>& triplets_A,
