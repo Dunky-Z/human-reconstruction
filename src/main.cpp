@@ -66,7 +66,7 @@ int main()
 	//meshio::ReadObj((BIN_DATA_PATH + "AVE.obj").c_str(), V, F);
 	//printShape(V, F);
 
-	//measure.calcDijkstra(V, F);
+	measure.calcDijkstra(V, F);
 	//measure.calcExact(V, F, 1);
 
 
