@@ -82,24 +82,24 @@ class MayaviQWidget(QtWidgets.QWidget):
     self.vertices = self.vertices.astype('float32')
     self.visualization.update_plot(self.vertices, self.facets)
 
-  # def select_mode(self, label="female", flag=0):
-  #   self.body = self.bodies[label]
-  #   self.flag_ = flag
-  #   self.update()
-  #
-  # def sliderForwardedValueChangeHandler(self, sliderID, val, minVal, maxVal):
-  #   x = val / 10.0
-  #   self.input_data[sliderID] = x
-  #   start = time.time()
-  #   self.update()
-  #   print(' [**] update body in %f s' % (time.time() - start))
-  #
-  # def save(self):
-  #   utils.save_obj("result.obj", self.vertices, self.facets+1)
-  #   output = np.array(utils.calc_measure(self.body.cp, self.vertices, self.facets))
-  #   for i in range(0, utils.M_NUM):
-  #     print("%s: %f" % (utils.M_STR[i], output[i, 0]))
-  #
+  def select_mode(self, label="female", flag=0):
+    self.body = self.bodies[label]
+    self.flag_ = flag
+    self.update()
+
+  def sliderForwardedValueChangeHandler(self, sliderID, val, minVal, maxVal):
+    x = val / 10.0
+    self.input_data[sliderID] = x
+    start = time.time()
+    self.update()
+    print(' [**] update body in %f s' % (time.time() - start))
+
+  def save(self):
+    utils.save_obj("result.obj", self.vertices, self.facets+1)
+    output = np.array(utils.calc_measure(self.body.cp, self.vertices, self.facets))
+    for i in range(0, utils.M_NUM):
+      print("%s: %f" % (utils.M_STR[i], output[i, 0]))
+
   # def predict(self, data):
   #   mask = np.zeros((utils.M_NUM, 1), dtype=bool)
   #   for i in range(0, data.shape[0]):

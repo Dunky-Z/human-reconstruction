@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1026</width>
-    <height>911</height>
+    <width>1044</width>
+    <height>949</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -105,7 +105,7 @@
         </spacer>
        </item>
        <item row="0" column="1">
-        <widget class="QRadioButton" name="radioButton">
+        <widget class="QRadioButton" name="radioButton_male">
          <property name="styleSheet">
           <string notr="true">/*RadioButton样式设置*/
 QRadioButton::indicator { 
@@ -153,7 +153,7 @@ QRadioButton{
         </spacer>
        </item>
        <item row="0" column="4">
-        <widget class="QRadioButton" name="radioButton_2">
+        <widget class="QRadioButton" name="radioButton_female">
          <property name="styleSheet">
           <string notr="true">/*RadioButton样式设置*/
 QRadioButton::indicator { 
@@ -217,7 +217,7 @@ QRadioButton{
         </spacer>
        </item>
        <item row="1" column="1" colspan="2">
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="pushButton_reset">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -265,7 +265,7 @@ QPushButton{
         </spacer>
        </item>
        <item row="1" column="4">
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="pushButton_predict">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -319,7 +319,7 @@ QPushButton{
      </widget>
     </item>
     <item row="0" column="3" rowspan="3">
-     <widget class="QWidget" name="maya" native="true">
+     <widget class="QWidget" name="mayawindows" native="true">
       <property name="minimumSize">
        <size>
         <width>300</width>
@@ -329,8 +329,6 @@ QPushButton{
       <property name="styleSheet">
        <string notr="true"/>
       </property>
-      <zorder>measure</zorder>
-      <zorder>widget_5</zorder>
      </widget>
     </item>
     <item row="0" column="5" rowspan="4">
@@ -984,7 +982,7 @@ QPushButton{
            </widget>
           </item>
           <item>
-           <widget class="QSlider" name="horizontalSlider01">
+           <widget class="QSlider" name="horizontalSlider01_1">
             <property name="styleSheet">
              <string notr="true">QSlider::handle:horizontal{
 	width:15px;
@@ -1009,7 +1007,7 @@ background-color:rgb(233,143,36);
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="doubleSpinBox01">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox01_1">
             <property name="styleSheet">
              <string notr="true">QDoubleSpinBox {
 border-radius:4px;
@@ -2230,7 +2228,7 @@ border-radius:4px;
      </widget>
     </item>
    </layout>
-   <zorder>maya</zorder>
+   <zorder>mayawindows</zorder>
    <zorder>predict</zorder>
    <zorder>horizontalSpacer_4</zorder>
    <zorder>horizontalSpacer_2</zorder>
@@ -2242,25 +2240,10 @@ border-radius:4px;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1026</width>
+     <width>1044</width>
      <height>23</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionClose"/>
-   </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuEdit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen">
@@ -2276,6 +2259,11 @@ border-radius:4px;
   <action name="actionSave">
    <property name="text">
     <string>Save</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
    </property>
   </action>
  </widget>
