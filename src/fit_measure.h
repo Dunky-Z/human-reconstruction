@@ -156,4 +156,8 @@ Eigen::MatrixXd Mat2Array(
 	Eigen::MatrixXd& v);
 Eigen::MatrixXd Mat2Array(
 	Eigen::SparseMatrix<double>& v);
-void function1_grad(const real_1d_array &x, double &func, real_1d_array &grad, void *ptr);
+void function1_grad(
+	const real_1d_array &x, 
+	double &func, 
+	real_1d_array &grad, 
+	void *ptr);

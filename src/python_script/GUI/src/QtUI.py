@@ -95,9 +95,9 @@ class Demo(QMainWindow,Ui_HumanEstimate):
         #self.set_menu()
 
         self.set_radio()
-        # self.setDoubleSpinBox()
-        # self.setHorizontalSlider()
-        self.set_slider()
+        self.setDoubleSpinBox()
+        self.setHorizontalSlider()
+        #self.set_slider()
 
         self.flag_ = 0
         self.label_ = "female"
@@ -109,6 +109,7 @@ class Demo(QMainWindow,Ui_HumanEstimate):
         layout  = QtWidgets.QGridLayout(self.maya_container)
         self.viewer3D = MayaviQWidget(self.maya_container)
         layout.addWidget(self.viewer3D, 1, 1)
+        self.maya_container.show()
         print("setUp running")
 
     def set_menu(self):

@@ -458,6 +458,8 @@ Eigen::MatrixXd LBFGS(
 	Eigen::SparseMatrix<double> b1 = L * v;
 	b_up = b1;
 	ConstructB(b1, b_down);
+
+
 	alglib::real_1d_array x;
 	//std::cout << vertices.coeff(0, 0) << "  " << vertices.coeff(1, 0) << "  " << vertices.coeff(2, 0) << std::endl;
 	x.attach_to_ptr(3 * num_verts, vertices.data());
@@ -636,15 +638,16 @@ void function1_grad(
 	//Vp.setConstant(0.1);
 	//std::cout << setprecision(15) << Vp.coeff(0, 0) << "  " << Vp.coeff(0, 1) << "  " << Vp.coeff(0, 2) << "  " << std::endl;
 	func = func_x(L, Vp, b_up) + 0.5*beta*func_x(C, Vp, b_down);
-	alpha.resize(num_edge_all, 3);
 
+	std::cout << alpha.rows() << " " << alpha.cols() << std::endl;
+	std::cout << alpha.coeff(0, 0) << std::endl;
 	Eigen::MatrixXd CVp = C * Vp;
 	Eigen::MatrixXd CVp_t = Mat2Array(CVp);
 	Eigen::MatrixXd b_down_t = Mat2Array(b_down);
 	Eigen::MatrixXd alpha_t = Mat2Array(alpha).transpose();
 	Eigen::MatrixXd t = alpha_t * (CVp_t - b_down_t);
 	func = func + t.coeff(0, 0);
-	//std::cout << setprecision(15) << "func: " << func << endl;
+	std::cout << setprecision(15) << "func: " << func << endl;
 	auto CT = C.transpose();
 	Eigen::MatrixXd grad_t = CalcGradient(Vp, L, b_up) + CT * alpha + 0.5*beta * CalcGradient(Vp, C, b_down);
 	SetGrad(grad_t, grad);
@@ -798,31 +801,64 @@ Eigen::Matrix3Xd LeastSquare(
 	return res_vertice;
 }
 
+Eigen::Matrix3Xd LeastSquare(
+	SurfaceMesh& mesh,
+	Eigen::Matrix3Xd& vertices,
+	std::vector<Tri>& triplets_A,
+	std::vector<Tri>& triplets_C)
+{
+	CaculateLaplacianCotMatrix(mesh, triplets_A);
+	Eigen::SimplicialCholesky<Eigen::SparseMatrix<double>> solver;
+	auto AT = A.transpose();
+	Eigen::SparseMatrix<double> ATA = AT * A;
+	solver.compute(ATA);
+	double epsilon;
+	Eigen::SparseMatrix<double> new_vertice;
+	while (epsilon >= eps)
+	{
+		ConstructCoefficientMatrix(point_idx, vertices, one_measure, input_m, triplets_A, triplets_C);
+		ConstructCoefficientMatrixBottom(triplets_C);
+		Eigen::SparseMatrix<double> v(num_verts, 3);
+		Mat2Vec(v, vertices);
+		Eigen::SparseMatrix<double> b1 = L * v;
+		b_up = b1;
+		ConstructB(b1, b_down);
+		if (solver.info() != Eigen::Success)
+			ShowMessage(string(">Solve Failed"));
+		new_vertice = solver.solve(AT * b);
+		ShowMessage(string(">Solve Success"));
+		epsilon = (vertices - new_vertice).norm();
+	}
+	Eigen::Matrix3Xd res_vertice;
+	Sparse2Dense(new_vertice, res_vertice);
+	WriteMesh(mesh, res_vertice);
+	return res_vertice;
+}
+
 Eigen::MatrixXd Solver(
 	SurfaceMesh& mesh,
 	Eigen::Matrix3Xd& vertices)
 {
 	Eigen::Matrix3Xd vertices_one_next;
 	Eigen::MatrixXd alpha_next;
+	alpha.resize(1239, 3);
 	alpha.setConstant(0.1);
 	int it = 0;
 	double epsilon;
 	do
 	{
-		it++;
-		cout << "it: " << it << endl;
 		std::vector<Tri> triplets_A;
 		std::vector<Tri> triplets_C;
 		num_edge_all = 0;
 		edge.clear();
-		vertices_one_next = CG(mesh, vertices, triplets_A, triplets_C);
+		vertices_one_next = LeastSquare(mesh, vertices, triplets_A, triplets_C);
 		epsilon = (vertices - vertices_one_next).norm();
 		alpha.resize(num_edge_all, 3);
 		alpha_next.resize(num_edge_all, 3);
 		vertices = vertices_one_next;
 		alpha_next = alpha + beta * (C * (vertices_one_next.transpose()) - b_down);
 		alpha = alpha_next;
-		beta += 1000;
+		beta += 100;
 		std::cout << setprecision(15) << "eps: " << epsilon << endl;
 	} while (epsilon >= eps);
 	return vertices_one_next;

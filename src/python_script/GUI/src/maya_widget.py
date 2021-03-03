@@ -68,7 +68,7 @@ class MayaviQWidget(QtWidgets.QWidget):
     # models for shape representing
     self.bodies = {"female": Reshaper(label="female"), "male":Reshaper(label="male")}
     self.body = self.bodies["female"]
-    self.flag_ = 0
+    self.flag_ = 2
 
     self.vertices = self.body.mean_vertex
     self.normals = self.body.normals
