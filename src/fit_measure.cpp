@@ -771,35 +771,35 @@ void Sparse2Dense(Eigen::SparseMatrix<double>& new_vertice, Eigen::Matrix3Xd& re
 //	SaveObj(mesh, new_vertice);*/
 //}
 
-
-
-Eigen::Matrix3Xd LeastSquare(
-	SurfaceMesh& mesh,
-	Eigen::Matrix3Xd& vertices,
-	std::vector<Tri>& triplets_A,
-	std::vector<Tri>& triplets_C)
-{
-	CaculateLaplacianCotMatrix(mesh, triplets_A);
-	ConstructCoefficientMatrix(point_idx, vertices, one_measure, input_m, triplets_A, triplets_C);
-	ConstructCoefficientMatrixBottom(triplets_C);
-	Eigen::SparseMatrix<double> v(num_verts, 3);
-	Mat2Vec(v, vertices);
-	Eigen::SparseMatrix<double> b1 = L * v;
-	b_up = b1;
-	ConstructB(b1, b_down);
-	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
-	auto AT = A.transpose();
-	Eigen::SparseMatrix<double> ATA = AT * A;
-	solver.compute(ATA);
-	if (solver.info() != Eigen::Success)
-		ShowMessage(string(">Solve Failed"));
-	Eigen::SparseMatrix<double> new_vertice = solver.solve(AT * b);
-	ShowMessage(string(">Solve Success"));
-	Eigen::Matrix3Xd res_vertice;
-	Sparse2Dense(new_vertice, res_vertice);
-	WriteMesh(mesh, res_vertice);
-	return res_vertice;
-}
+//
+//
+//Eigen::Matrix3Xd LeastSquare(
+//	SurfaceMesh& mesh,
+//	Eigen::Matrix3Xd& vertices,
+//	std::vector<Tri>& triplets_A,
+//	std::vector<Tri>& triplets_C)
+//{
+//	CaculateLaplacianCotMatrix(mesh, triplets_A);
+//	ConstructCoefficientMatrix(point_idx, vertices, one_measure, input_m, triplets_A, triplets_C);
+//	ConstructCoefficientMatrixBottom(triplets_C);
+//	Eigen::SparseMatrix<double> v(num_verts, 3);
+//	Mat2Vec(v, vertices);
+//	Eigen::SparseMatrix<double> b1 = L * v;
+//	b_up = b1;
+//	ConstructB(b1, b_down);
+//	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
+//	auto AT = A.transpose();
+//	Eigen::SparseMatrix<double> ATA = AT * A;
+//	solver.compute(ATA);
+//	if (solver.info() != Eigen::Success)
+//		ShowMessage(string(">Solve Failed"));
+//	Eigen::SparseMatrix<double> new_vertice = solver.solve(AT * b);
+//	ShowMessage(string(">Solve Success"));
+//	Eigen::Matrix3Xd res_vertice;
+//	Sparse2Dense(new_vertice, res_vertice);
+//	WriteMesh(mesh, res_vertice);
+//	return res_vertice;
+//}
 
 Eigen::Matrix3Xd LeastSquare(
 	SurfaceMesh& mesh,
